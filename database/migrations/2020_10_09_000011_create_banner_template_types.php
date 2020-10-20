@@ -12,7 +12,7 @@ class CreateBannerTemplateTypes extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('bannner_template_types', function (Blueprint $table) {
+        Schema::create('banner_template_types', function (Blueprint $table) {
             $table->id();
             $table->foreignId('template_id')->constrained('templates');
             $table->foreignId('banner_type_id')->constrained('banner_types');
@@ -25,6 +25,6 @@ class CreateBannerTemplateTypes extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('bannner_template_types');
+        Schema::dropIfExists('banner_template_types');
     }
 }

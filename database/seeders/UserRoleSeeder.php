@@ -13,21 +13,13 @@ class UserRoleSeeder extends Seeder {
      * @return void
      */
     public function run() {
-        DB::table('user_roles')->insert([
-            'id' => 1,
-            'role' => 'Blocked'
-        ]);
-        DB::table('user_roles')->insert([
-            'id' => 2,
-            'role' => 'Standard'
-        ]);
-        DB::table('user_roles')->insert([
-            'id' => 3,
-            'role' => 'Moderator'
-        ]);
-        DB::table('user_roles')->insert([
-            'id' => 4,
-            'role' => 'Admin'
-        ]);
+        $user_roles = [
+            ['role' => 'Blocked'],
+            ['role' => 'Standard'],
+            ['role' => 'Moderator'],
+            ['role' =>  'Admin']
+        ];
+        
+        DB::table('user_roles')->insert($user_roles);
     }
 }

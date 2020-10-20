@@ -15,7 +15,7 @@ class CreateTemplates extends Migration {
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignUuid('user_uuid')->references('uuid')->on('users');
+            $table->foreignUuid('user_uuid')->nullable()->references('uuid')->on('users');
             $table->timestamps();
         });
     }

@@ -14,9 +14,10 @@ class CreateColorSchemes extends Migration {
     public function up() {
         Schema::create('color_schemes', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
             $table->string('background_color');
             $table->string('cta_color');
-            $table->foreignUuid('user_uuid')->references('uuid')->on('users');
+            $table->foreignUuid('user_uuid')->nullable()->references('uuid')->on('users');
             $table->timestamps();
         });
     }
