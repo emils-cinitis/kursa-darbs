@@ -1,15 +1,13 @@
 <template>
     <div>
         <navigation :user='user'></navigation>
-        <div class="py-5">
-            <div class='container'>
-                <router-view :user='user'></router-view>
-            </div>
+        <div class='container-fluid'>
+            <router-view :user='user'></router-view>
         </div>
     </div>
 </template>
 <script>    
-    import Navigation from './components/Navigation.vue'
+    import Navigation from './components/Navigation.vue';
     export default {
         computed: {
             user() {

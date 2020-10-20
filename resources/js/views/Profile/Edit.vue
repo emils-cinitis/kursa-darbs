@@ -1,5 +1,5 @@
 <template>
-    <b-row>
+    <div class="block-with-sidebar">
         <h1>Edit information</h1>
         <b-col cols="12">
             <b-form @submit="edit">
@@ -48,17 +48,17 @@
                     ></b-form-input>
                 </b-form-group>
                 <b-row>
-                    <b-col cols="12">
-                        <b-button type="submit" variant="success">Edit</b-button>
+                    <b-col cols="12" class="btn-container">
+                        <b-button type="submit" class="btn-form" variant="success">Edit</b-button>
                     </b-col>
                 </b-row>
             </b-form>
         </b-col>
-    </b-row>
+    </div>
 </template>
 
 <script>
-import axios from 'axios';
+    import axios from 'axios';
 
     export default {
         data() {

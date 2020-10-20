@@ -1,26 +1,20 @@
 import VueRouter from 'vue-router'
 
 import Home from './views/Home.vue'
-import About from './views/About.vue'
 import Register from './views/Register.vue'
 import Login from './views/Login.vue'
-//import BannerIndex from './views/Banners/Index.vue'
 import ProfileIndex from './views/Profile/Index.vue'
 import ProfileEdit from './views/Profile/Edit.vue'
+import ProfileDelete from './views/Profile/Delete.vue'
+import BannerIndex from './views/Banners/Index.vue'
+import BannerAll from './views/Banners/ShowAll.vue'
+import BannerForm from './views/Banners/Form.vue'
 
 const routes = [
     {
         path: '/',
         name: 'home',
         component: Home,
-        meta: {
-            auth: undefined
-        }
-    },
-    {
-        path: '/about',
-        name: 'about',
-        component: About,
         meta: {
             auth: undefined
         }
@@ -56,17 +50,59 @@ const routes = [
                 meta: {
                     auth: true
                 },
+            },
+            {
+                path: 'delete',
+                name: 'delete-user',
+                component: ProfileDelete,
+                meta: {
+                    auth: true
+                },
             }
         ]
     },
-    // ({
-    //     path: '/banners',
-    //     name: 'banners',
-    //     component: BannerIndex,
-    //     meta: {
-    //         auth: true
-    //     }
-    // },
+    {
+        path: '/banners',
+        name: 'banners',
+        component: BannerIndex,
+        meta: {
+            auth: true
+        },
+        children: [
+            {
+                path: 'all',
+                name: 'all-banenrs',
+                component: BannerAll,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'add',
+                name: 'add-banner',
+                component: BannerForm,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'edit/:uuid',
+                name: 'edit-banner',
+                component: BannerForm,
+                meta: {
+                    auth: true
+                }
+            }
+            /*{
+                path: 'edit',
+                name: 'edit-banner',
+                component: BannerEdit,
+                meta: {
+                    auth: true
+                },
+            }*/
+        ]
+    },
 ];
 
 const router = new VueRouter({

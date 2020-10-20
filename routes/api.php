@@ -27,8 +27,10 @@ Route::namespace('api')->group(function () {
     Route::middleware('auth:api')->group(function () {
         Route::get('/user/all', [ UserController::class, 'userInfo' ] );
         Route::post('logout', [ UserController::class, 'logout' ] );
+        Route::delete('/user/delete', [ UserController::class, 'delete' ]);
 
         Route::get('/user/banners', [ BannerController::class, 'getUserBanners' ] );
+        Route::get('/user/banner', [ BannerController::class, 'getSpecificBanner' ] );
         Route::post('/user/banners', [ BannerController::class, 'saveBanner' ] );
     });
 });

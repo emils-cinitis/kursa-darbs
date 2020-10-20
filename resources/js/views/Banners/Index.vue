@@ -12,8 +12,8 @@
         data() {
             return {
                 side_navigation_elements: [
-                    { name: 'Edit user information', router_name: 'edit-user' },
-                    { name: 'Delete user', router_name: 'delete-user' }
+                    { name: 'All banners', router_name: 'all-banenrs' },
+                    { name: 'Add banner', router_name: 'add-banner' }
                 ],
             }
         },
