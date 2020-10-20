@@ -1,0 +1,26 @@
+.side-navigation {
+    background-color: gray;
+    padding-top: 2rem;
+}
+.side-navigation ul {
+    list-style: none;
+    padding: 0;
+}
+.side-navigation ul li {
+    padding: 0 0 10px 0;
+}
+.side-navigation ul li a {
+    font-size: 20px;
+    color: lightgray;
+}
+.block-with-sidebar {
+    padding-top: 1.5rem;
+}
+
+.btn-container {
+    text-align: center;
+}
+.btn.btn-form {
+    width: 90px;
+    padding: 5px 10px;
+}

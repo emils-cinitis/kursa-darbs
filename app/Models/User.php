@@ -57,6 +57,13 @@ class User extends Authenticatable implements JWTSubject {
         return $this->hasMany('App\Models\Banner', 'created_by');
     }
 
+    public function deleteAllBanners() {
+        $banners = $this->banners;
+        foreach($banners as $banner) {
+            $banner->deleteAllInfo();
+        }
+    }
+
     public function getJWTIdentifier() {
         return $this->getKey();
     }

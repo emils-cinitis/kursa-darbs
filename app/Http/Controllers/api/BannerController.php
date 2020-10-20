@@ -26,6 +26,32 @@ class BannerController extends Controller {
         }
     }
 
+    public function getSpecificBanner(Request $request) {
+        $uuid = $request->input('uuid');
+        
+        if(!empty($uuid)) {
+            try {
+                $banner = Banner::find($uuid);
+                return response()->json([
+                    'status' => 'success',
+                    'banner' => $banner
+                ], 200);
+
+            } catch(Exception $e) {
+
+                return response()->json([
+                    'status'  => 'error', 
+                    'message' => 'Cannot get banner information'
+                ], 500);
+            }
+        } else { 
+            return response()->json([
+                'status'  => 'error', 
+                'message' => 'No banner UUID passed'
+            ], 422);
+        }
+    }
+
     public function saveBanner(Request $request){
         $validatedData = $request->validate([
             'name'     => 'required',
@@ -41,19 +67,15 @@ class BannerController extends Controller {
                 ];
                 $banner_variables = array_merge($extra_variables, $request->all());
                 $banner = Banner::create($banner_variables);
-                return response()->json(
-                    [
-                        'status'  => 'success', 
-                        'message' => 'Created successfully'
-                    ], 200
-                );
+                return response()->json([
+                    'status'  => 'success', 
+                    'message' => 'Created successfully'
+                ], 200);
             } catch(Exception $e) {
-                return response()->json(
-                    [
-                        'status'  => 'error', 
-                        'message' => 'Cannot create banner'
-                    ], 500
-                );
+                return response()->json([
+                    'status'  => 'error', 
+                    'message' => 'Cannot create banner'
+                ], 500);
             }
         } else {
             //Edit banner

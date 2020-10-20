@@ -115,6 +115,28 @@ class UserController extends Controller {
     }
 
 
+    public function delete(Request $request){
+        try {
+            $user = User::find(Auth::user()->uuid);
+
+            $user->deleteAllBanners();
+            $user->delete();
+
+            return response()->json([
+                'status'    => 'success', 
+                'message'   => 'User deleted'
+            ], 200);
+
+        } catch(Exception $e) {
+
+            return response()->json([
+                'status'    => 'error', 
+                'message'   => 'Cannot delete user'
+            ], 500);
+        }
+    }
+
+
     /**
      * Login user and return a token
      * @param Request $request
@@ -125,7 +147,7 @@ class UserController extends Controller {
         if (!$token = JWTAuth::attempt($credentials)) {
                 return response([
                     'status' => 'error',
-                    'message' => 'Invalid Credentials.'
+                    'message' => 'Email and / or password is wrong'
                 ], 422);
         }
         return response()->json(['status' => 'successs'], 200)
