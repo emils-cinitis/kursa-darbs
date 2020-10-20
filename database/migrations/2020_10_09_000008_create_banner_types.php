@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserRoles extends Migration {
+class CreateBannerTypes extends Migration {
 
     /**
      * Run the migrations.
@@ -12,9 +12,11 @@ class CreateUserRoles extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('user_roles', function (Blueprint $table) {
+        Schema::create('banner_types', function (Blueprint $table) {
             $table->id();
-            $table->string('role');
+            $table->string('title');
+            $table->smallInteger('width');
+            $table->smallInteger('height');
         });
     }
 
@@ -24,6 +26,6 @@ class CreateUserRoles extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('user_roles');
+        Schema::dropIfExists('banner_types');
     }
 }
