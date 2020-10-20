@@ -4,21 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration {
-    
+class CreateEmailConfirmations extends Migration {
+
     /**
      * Run the migrations.
      *
      * @return void
      */
     public function up() {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('email_confirmations', function (Blueprint $table) {
             $table->uuid('uuid')->primary();
-            $table->string('email')->unique();
-            $table->string('username');
-            $table->string('password');
-            $table->foreignId('user_role')->constrained('user_roles');
-            $table->timestamps();
+            $table->boolean('confirmed');
+            $table->timestamp('created_at');
+            $table->foreignUuid('user_uuid')->references('uuid')->on('users');
         });
     }
 
@@ -28,6 +26,6 @@ class CreateUsersTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('email_confirmations');
     }
 }

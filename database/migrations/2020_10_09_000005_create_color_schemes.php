@@ -4,20 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration {
-    
+class CreateColorSchemes extends Migration {
+
     /**
      * Run the migrations.
      *
      * @return void
      */
     public function up() {
-        Schema::create('users', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
-            $table->string('email')->unique();
-            $table->string('username');
-            $table->string('password');
-            $table->foreignId('user_role')->constrained('user_roles');
+        Schema::create('color_schemes', function (Blueprint $table) {
+            $table->id();
+            $table->string('background_color');
+            $table->string('cta_color');
+            $table->foreignUuid('user_uuid')->references('uuid')->on('users');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ class CreateUsersTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('color_schemes');
     }
 }
