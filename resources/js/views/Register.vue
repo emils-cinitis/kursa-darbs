@@ -4,12 +4,12 @@
         <b-col cols="12">
             <b-form @submit="register">
                 <b-form-group
-                    label="Name:"
+                    label="Username:"
                     label-for="user-name"
                 >
                     <b-form-input 
                         id="user-name"
-                        v-model="user.name" 
+                        v-model="user.username" 
                         placeholder="Enter your name" 
                         type="text"
                         required
@@ -64,7 +64,7 @@
         data() {
             return {
                 user: {
-                    name: '',
+                    username: '',
                     email: '',
                     password: '',
                     password_confirmation: ''

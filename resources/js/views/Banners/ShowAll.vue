@@ -1,6 +1,6 @@
 <template>
     <div class="block-with-sidebar">
-        <h1>Show all banners</h1>
+        <h1>All banners</h1>
         <ul>
             <li v-for="(banner, key) in banners" :key="key">
                 {{banner.name}}

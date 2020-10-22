@@ -9,8 +9,8 @@
                 >
                     <b-form-input 
                         id="user-name"
-                        v-model="user.name" 
-                        placeholder="Enter your name" 
+                        v-model="user.username" 
+                        placeholder="Enter your username" 
                         type="text"
                         required
                     ></b-form-input>
@@ -64,7 +64,7 @@
         data() {
             return {
                 user: {
-                    name: '',
+                    username: '',
                     email: '',
                     password: '',
                     password_confirmation: ''

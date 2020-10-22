@@ -9,6 +9,9 @@ import ProfileDelete from './views/Profile/Delete.vue'
 import BannerIndex from './views/Banners/Index.vue'
 import BannerAll from './views/Banners/ShowAll.vue'
 import BannerForm from './views/Banners/Form.vue'
+import ColorSchemeIndex from './views/ColorSchemes/Index.vue';
+import ColorSchemesAll from './views/ColorSchemes/ShowAll.vue';
+import ColorSchemesForm from './views/ColorSchemes/Form.vue';
 
 const routes = [
     {
@@ -71,7 +74,7 @@ const routes = [
         children: [
             {
                 path: 'all',
-                name: 'all-banenrs',
+                name: 'all-banners',
                 component: BannerAll,
                 meta: {
                     auth: true
@@ -89,6 +92,48 @@ const routes = [
                 path: 'edit/:uuid',
                 name: 'edit-banner',
                 component: BannerForm,
+                meta: {
+                    auth: true
+                }
+            }
+            /*{
+                path: 'edit',
+                name: 'edit-banner',
+                component: BannerEdit,
+                meta: {
+                    auth: true
+                },
+            }*/
+        ]
+    },
+    {
+        path: '/color-schemes',
+        name: 'color-schemes',
+        component: ColorSchemeIndex,
+        meta: {
+            auth: true
+        },
+        children: [
+            {
+                path: 'all',
+                name: 'all-color-schemes',
+                component: ColorSchemesAll,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'add',
+                name: 'add-color-scheme',
+                component: ColorSchemesForm,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'edit/:id',
+                name: 'edit-color-scheme',
+                component: ColorSchemesForm,
                 meta: {
                     auth: true
                 }

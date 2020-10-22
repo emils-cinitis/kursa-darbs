@@ -25,7 +25,7 @@ class UserController extends Controller {
         if(Auth::user() == null){
             //Create user
             $validator = Validator::make($request->all(), [
-                'name'      => 'required',
+                'username'  => 'required',
                 'email'     => 'required|unique:users|email',
                 'password'  => 'required|confirmed',
             ]);
@@ -40,7 +40,7 @@ class UserController extends Controller {
             }
             
             $user_info['uuid']= Str::uuid()->toString();
-            if(!isset($user_info['role'])) $user_info['role'] = 2;
+            if(!isset($user_info['user_role'])) $user_info['user_role'] = 2;
             $user_info['password'] = Hash::make($request->password);
 
             try {
@@ -66,7 +66,7 @@ class UserController extends Controller {
         } else {
             //Edit user
             $validatableData = [
-                'name'      => 'required',
+                'username'  => 'required',
                 'email'     => 'required|email',
             ];
 
@@ -85,7 +85,7 @@ class UserController extends Controller {
             }
 
             $user = User::find(Auth::user()->uuid);
-            $user->name = $request->input('name');
+            $user->username = $request->input('username');
             $user->email = $request->input('email');
 
             if(!empty($request->input('password'))){
@@ -182,7 +182,7 @@ class UserController extends Controller {
     /**
      * Get authenticated user
      */
-    public function userInfo(Request $request) {
+    public function get(Request $request) {
         try {
             $user = User::find(Auth::user()->uuid);
             return response()->json([
@@ -203,7 +203,7 @@ class UserController extends Controller {
      * Refresh JWT token
      */
     public function refresh() {
-        try{
+        try {
             if ($token = $this->guard()->refresh()) {
                 return response()
                     ->json(['status' => 'successs'], 200)

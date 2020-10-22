@@ -12,8 +12,8 @@
         data() {
             return {
                 side_navigation_elements: [
-                    { name: 'All banners', router_name: 'all-banners' },
-                    { name: 'Add banner', router_name: 'add-banner' }
+                    { name: 'All color schemes', router_name: 'all-color-schemes' },
+                    { name: 'Add color scheme', router_name: 'add-color-scheme' }
                 ],
             }
         },

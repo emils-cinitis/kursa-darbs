@@ -10,7 +10,7 @@ use App\Models\Banner;
 use App\Models\User;
 
 class BannerController extends Controller {
-    public function getUserBanners() {
+    public function getAll() {
         $user = User::find(Auth::user()->uuid);
         try {
             $banners = $user->banners;
@@ -26,7 +26,7 @@ class BannerController extends Controller {
         }
     }
 
-    public function getSpecificBanner(Request $request) {
+    public function get(Request $request) {
         $uuid = $request->input('uuid');
         
         if(!empty($uuid)) {
@@ -52,7 +52,7 @@ class BannerController extends Controller {
         }
     }
 
-    public function saveBanner(Request $request){
+    public function store(Request $request){
         $validatedData = $request->validate([
             'name'     => 'required',
             'main_text'  => 'required',

@@ -21,11 +21,11 @@ class User extends Authenticatable implements JWTSubject {
      * @var array
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
         'uuid',
-        'role'
+        'user_role'
     ];
 
     /**
@@ -49,12 +49,12 @@ class User extends Authenticatable implements JWTSubject {
         'email_verified_at' => 'datetime',
     ];
 
-    public function getRole() {
-        return $this->hasOne('App\Models\UserRoles');
-    }
-
     public function banners() {
         return $this->hasMany('App\Models\Banner', 'created_by');
+    }
+
+    public function colorSchemes() {
+        return $this->hasMany('App\Models\ColorScheme', 'user_uuid');
     }
 
     public function deleteAllBanners() {
