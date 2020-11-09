@@ -68,6 +68,11 @@
                     title: '',
                     background_color: '',
                     cta_color: ''
+                },
+                errors: {
+                    title: '',
+                    background_color: '',
+                    cta_color: ''
                 }
             }
         },
