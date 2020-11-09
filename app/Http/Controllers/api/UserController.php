@@ -25,18 +25,16 @@ class UserController extends Controller {
         if(Auth::user() == null){
             //Create user
             $validator = Validator::make($request->all(), [
-                'username'  => 'required',
+                'username'  => 'required|unique:users',
                 'email'     => 'required|unique:users|email',
                 'password'  => 'required|confirmed',
             ]);
             
             if ($validator->fails()) {
-                return response()->json(
-                    [
-                        'status'    => 'error', 
-                        'message'   => $validator->messages() //ToDo: Fix
-                    ], 422
-                );
+                return response()->json([
+                    'status'    => 'error', 
+                    'messages'  => $validator->messages()
+                ], 422);
             }
             
             $user_info['uuid']= Str::uuid()->toString();
@@ -65,26 +63,25 @@ class UserController extends Controller {
             }
         } else {
             //Edit user
+            $user = User::find(Auth::user()->uuid);
+
             $validatableData = [
                 'username'  => 'required',
                 'email'     => 'required|email',
             ];
 
-            if(!empty($request->input('password'))){
-                array_push($validatableData, ['password'  => 'required|confirmed']);
-            }
+            if($request->input('username') != $user->username) $validatableData['username'] = 'required|unique:users';
+            if($request->input('email') != $user->email) $validatableData['email'] = 'required|email|unique:users';
+            if(!empty($request->input('password'))) array_push($validatableData, ['password'  => 'required|confirmed']);
 
             $validator = Validator::make($request->all(), $validatableData);
             if ($validator->fails()) {
-                return response()->json(
-                    [
-                        'status'    => 'error', 
-                        'message'   => '??' //ToDo: Fix
-                    ], 422
-                );
+                return response()->json([
+                    'status'    => 'error', 
+                    'messages'  => $validator->messages()
+                ], 422);
             }
 
-            $user = User::find(Auth::user()->uuid);
             $user->username = $request->input('username');
             $user->email = $request->input('email');
 
@@ -145,10 +142,10 @@ class UserController extends Controller {
     public function login(Request $request) {
         $credentials = $request->only('email', 'password');
         if (!$token = JWTAuth::attempt($credentials)) {
-                return response([
-                    'status' => 'error',
-                    'message' => 'Email and / or password is wrong'
-                ], 422);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email and / or password is wrong'
+            ], 422);
         }
         return response()->json(['status' => 'successs'], 200)
             ->header('Access-Control-Expose-Headers', 'Authorization')

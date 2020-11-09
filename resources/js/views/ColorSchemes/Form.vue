@@ -12,6 +12,11 @@
                     type="text"
                 ></b-form-input>
             </b-form-group>
+            <b-row v-if='errors.title' class='error-message'>
+                <b-col cols="12">
+                    <p>{{ errors.title[0] }}</p>
+                </b-col>
+            </b-row>
             <!-- ToDo: add color picker -->
             <b-form-group
                 label="Color scheme background color:"
@@ -24,6 +29,11 @@
                     type="text"
                 ></b-form-input>
             </b-form-group>
+            <b-row v-if='errors.background_color' class='error-message'>
+                <b-col cols="12">
+                    <p>{{ errors.background_color[0] }}</p>
+                </b-col>
+            </b-row>
             <b-form-group
                 label="Color scheme CTA color:"
                 label-for="color-scheme-cta-color"
@@ -35,6 +45,11 @@
                     type="text"
                 ></b-form-input>
             </b-form-group>
+            <b-row v-if='errors.cta_color' class='error-message'>
+                <b-col cols="12">
+                    <p>{{ errors.cta_color[0] }}</p>
+                </b-col>
+            </b-row>
             <b-row>
                 <b-col cols="12">
                     <b-button type="submit" variant="success">Save</b-button>

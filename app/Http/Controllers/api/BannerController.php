@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Banner;
@@ -53,10 +54,17 @@ class BannerController extends Controller {
     }
 
     public function store(Request $request){
-        $validatedData = $request->validate([
-            'name'     => 'required',
-            'main_text'  => 'required',
+        $validator = Validator::make($request->all(), [
+            'name'       => 'required',
+            'main_text'  => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 'error', 
+                'messages'  => $validator->messages()
+            ], 422);
+        }
 
         if(empty($request->input('id'))){
             //Create banner

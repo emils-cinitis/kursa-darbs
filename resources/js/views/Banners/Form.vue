@@ -12,6 +12,11 @@
                     type="text"
                 ></b-form-input>
             </b-form-group>
+            <b-row v-if='errors.name' class='error-message'>
+                <b-col cols="12">
+                    <p>{{ errors.name[0] }}</p>
+                </b-col>
+            </b-row>
             <b-form-group
                 label="Banner text:"
                 label-for="banner-text"
@@ -23,6 +28,11 @@
                     type="text"
                 ></b-form-input>
             </b-form-group>
+            <b-row v-if='errors.text' class='error-message'>
+                <b-col cols="12">
+                    <p>{{ errors.text[0] }}</p>
+                </b-col>
+            </b-row>
             <b-row>
                 <b-col cols="12">
                     <b-button type="submit" variant="success">Save</b-button>
@@ -39,6 +49,10 @@
                 banner: {
                     name: '',
                     main_text: ''
+                },
+                errors: {
+                    name: '',
+                    text: ''
                 }
             }
         },
@@ -54,8 +68,10 @@
                 await axios.post("/user/banners", this.banner)
                     .then((response) => {
                         // Show success
+                    })
+                    .catch((error) => {
+                        this.errors = error.response.data.messages;
                     });
-                    //Show error aswell
             },
             async getBannerInfo(uuid) {
                 await axios.get("/user/banner", {params: { uuid: uuid }} )

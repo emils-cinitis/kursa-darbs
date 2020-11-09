@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\ColorScheme;
+
 
 class ColorSchemeController extends Controller {
 
@@ -99,12 +101,18 @@ class ColorSchemeController extends Controller {
             ], 422);
         }
 
-        //ToDo: remake to different validator
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'title'             => 'required',
             'background_color'  => 'required',
-            'cta_color'         => 'required'
+            'cta_color'         => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 'error', 
+                'message'   => $validator->messages()
+            ], 422);
+        }
 
         try {
             if(empty($request->input('id'))) {
