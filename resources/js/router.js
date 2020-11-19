@@ -12,6 +12,9 @@ import BannerForm from './views/Banners/Form.vue'
 import ColorSchemeIndex from './views/ColorSchemes/Index.vue';
 import ColorSchemesAll from './views/ColorSchemes/ShowAll.vue';
 import ColorSchemesForm from './views/ColorSchemes/Form.vue';
+import TemplateIndex from './views/Templates/Index.vue';
+import TemplatesAll from './views/Templates/ShowAll.vue';
+import TemplatesForm from './views/Templates/Form.vue';
 
 const routes = [
     {
@@ -96,14 +99,6 @@ const routes = [
                     auth: true
                 }
             }
-            /*{
-                path: 'edit',
-                name: 'edit-banner',
-                component: BannerEdit,
-                meta: {
-                    auth: true
-                },
-            }*/
         ]
     },
     {
@@ -138,14 +133,40 @@ const routes = [
                     auth: true
                 }
             }
-            /*{
-                path: 'edit',
-                name: 'edit-banner',
-                component: BannerEdit,
+        ]
+    },
+    {
+        path: '/tempaltes',
+        name: 'tempaltes',
+        component: TemplateIndex,
+        meta: {
+            auth: true
+        },
+        children: [
+            {
+                path: 'all',
+                name: 'all-templates',
+                component: TemplatesAll,
                 meta: {
                     auth: true
                 },
-            }*/
+            },
+            {
+                path: 'add',
+                name: 'add-template',
+                component: TemplatesForm,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'edit/:id',
+                name: 'edit-template',
+                component: TemplatesForm,
+                meta: {
+                    auth: true
+                }
+            }
         ]
     },
 ];

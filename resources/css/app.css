@@ -24,3 +24,55 @@
     width: 90px;
     padding: 5px 10px;
 }
+.preview-giga {
+    max-width: 970px;
+    max-height: 250px;
+    overflow: hidden; 
+    border: 1px solid;
+}
+.preview-tower {
+    max-width: 300px;
+    max-height: 600px;
+    overflow: hidden; 
+    border: 1px solid;
+}
+
+.preview-block {
+    background: lightgray;
+    border: 1px solid black;
+}
+.preview-block span {
+    position: absolute;
+    width: 100%;
+    display: block;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.drag {
+    position: absolute;
+    z-index: 10;
+    width: 5px;
+    height: 5px;
+    background: gray;
+}
+.drag-top {
+    top: -3px;
+}
+.drag-bottom {
+    bottom: -3px;
+}
+.drag-left {
+    left: -3px;
+}
+.drag-right {
+    right: -3px;
+}
+
+
+.template-block {
+    width: calc(100% - 200px);
+}
+.template-sidebar {
+    width: 190px;
+    padding-left: 10px;
+}

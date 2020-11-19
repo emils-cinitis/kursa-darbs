@@ -16,7 +16,7 @@ class CreateBlockPositions extends Migration {
             $table->id();
             $table->smallInteger('width');
             $table->smallInteger('height');
-            $table->smallInteger('left_offest');
+            $table->smallInteger('left_offset');
             $table->smallInteger('top_offset');
             $table->smallInteger('z_index');
             $table->foreignId('template_id')->constrained('templates');

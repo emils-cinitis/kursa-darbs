@@ -85,7 +85,7 @@ class ColorSchemeController extends Controller {
 
             return response()->json([
                 'status'    => 'error',
-                'message'   => 'Cannot retreive color schemes'
+                'message'   => 'Cannot retreive color scheme'
             ], 422);
         }
     }

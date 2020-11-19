@@ -8,10 +8,13 @@
                     </b-nav-item>
                     <div class="d-flex mx-auto">
                         <b-nav-item v-if="Object.keys(user).length">
-                            <router-link :to="{ name: 'all-banners' }">Banners</router-link>
+                            <router-link :to="{ name: 'all-banners' }">My banners</router-link>
                         </b-nav-item>
                         <b-nav-item v-if="Object.keys(user).length">
-                            <router-link :to="{ name: 'all-color-schemes' }">Color schemes</router-link>
+                            <router-link :to="{ name: 'all-color-schemes' }">My color schemes</router-link>
+                        </b-nav-item>
+                        <b-nav-item v-if="Object.keys(user).length">
+                            <router-link :to="{ name: 'all-templates' }">My templates</router-link>
                         </b-nav-item>
                     </div>
                 </b-navbar-nav>

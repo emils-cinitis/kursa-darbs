@@ -29,7 +29,6 @@
                 await axios.get("/user/banners")
                     .then((response) => {
                         this.banners = response.data.banners;
-                        console.log(this.banners);
                     });
             }
         }

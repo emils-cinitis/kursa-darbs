@@ -57,6 +57,10 @@ class User extends Authenticatable implements JWTSubject {
         return $this->hasMany('App\Models\ColorScheme', 'user_uuid');
     }
 
+    public function templates() {
+        return $this->hasMany('App\Models\Template', 'user_uuid');
+    }
+
     public function deleteAllBanners() {
         $banners = $this->banners;
         foreach($banners as $banner) {
