@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder {
             BlockTypeSeeder::class,
             ColorSchemeSeeder::class,
             TemplateSeeder::class,
-            BannerTemplateTypeSeeder::class,
             BlockPositionSeeder::class
         ]);
     }
