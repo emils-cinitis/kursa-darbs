@@ -16,6 +16,7 @@ class CreateColorSchemes extends Migration {
             $table->id();
             $table->string('title');
             $table->string('background_color');
+            $table->string('text_color');
             $table->string('cta_color');
             $table->foreignUuid('user_uuid')->nullable()->references('uuid')->on('users');
             $table->timestamps();

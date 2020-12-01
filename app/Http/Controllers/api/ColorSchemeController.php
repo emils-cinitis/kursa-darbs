@@ -14,7 +14,7 @@ class ColorSchemeController extends Controller {
 
     private function getDefaultColorSchemes() {
         try {
-            $color_schemes = ColorScheme::where('user_uuid', NULL)->get();
+            $color_schemes = ColorScheme::where('user_uuid', NULL)->get(['id','title']);
             return $color_schemes;
         } catch (Exception $e) {
             return null;
@@ -33,16 +33,26 @@ class ColorSchemeController extends Controller {
         }
 
         try {
-            $color_schemes = $user->colorSchemes;
-            
-            if($request->input('all') === true) {
+                       
+            if($request->input('input') == true) {
+                $color_schemes = $user->colorSchemesSelect;
                 $default_color_schemes = $this->getDefaultColorSchemes();
                 if($default_color_schemes !== null) {
                     $color_schemes = array_merge(
-                        $color_schemes->toArray(), 
-                        $default_color_schemes->toArray()
+                        $default_color_schemes->toArray(),
+                        $color_schemes->toArray()
                     );
                 }
+
+                foreach($color_schemes as $key => $color_scheme) {
+                    $color_scheme['value'] = $color_scheme['id'];
+                    $color_scheme['text'] = $color_scheme['title'];
+                    unset($color_scheme['id']);
+                    unset($color_scheme['title']);
+                    $color_schemes[$key] = $color_scheme;
+                }
+            } else {
+                $color_schemes = $user->colorSchemes;
             }
 
             return response()->json([
@@ -104,6 +114,7 @@ class ColorSchemeController extends Controller {
         $validator = Validator::make($request->all(), [
             'title'             => 'required',
             'background_color'  => 'required',
+            'text_color'        => 'required',
             'cta_color'         => 'required',
         ]);
 
@@ -137,6 +148,7 @@ class ColorSchemeController extends Controller {
 
                 $color_scheme->title = $request->input('title');
                 $color_scheme->background_color = $request->input('background_color');
+                $color_scheme->text_color = $request->input('text_color');
                 $color_scheme->cta_color = $request->input('cta_color');
 
                 $color_scheme->save();

@@ -1,6 +1,7 @@
 .side-navigation {
     background-color: gray;
     padding-top: 2rem;
+    min-height: calc(100vh - 56px);
 }
 .side-navigation ul {
     list-style: none;
@@ -72,7 +73,35 @@
 .template-block {
     width: calc(100% - 200px);
 }
+.template-block-giga {
+    max-width: 1000px;
+}
+.template-block-tower, .template-block-square {
+    max-width: 300px;
+}
 .template-sidebar {
     width: 190px;
     padding-left: 10px;
+}
+
+.color-scheme-title {
+    font-size: 40px;
+}
+.text-preview {
+    font-size: 32px;
+}
+.color-scheme-container {
+    border: 1px solid gray;
+    border-radius: 10px;
+}
+.color-scheme-preview-container {
+    padding-bottom: 12px;
+}
+.cta-preview {
+    display: block;
+    width: fit-content;
+
+    padding: 10px 20px;
+    margin: 10px auto;
+    border-radius: 5px;
 }

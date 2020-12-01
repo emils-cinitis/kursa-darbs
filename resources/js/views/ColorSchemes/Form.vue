@@ -1,5 +1,10 @@
 <template>
     <div class="block-with-sidebar">
+        <b-modal id="color-picker" hide-footer title="Color picker">
+            <chrome v-model="selected_color" />
+            <b-button class="mt-3" variant="outline-danger" block @click="hideColorPicker">Cancel</b-button>
+            <b-button class="mt-3" variant="success" block @click="saveColor">Save</b-button>
+        </b-modal>
         <b-form @submit="saveColorScheme">
             <b-form-group
                 label="Title:"
@@ -17,15 +22,18 @@
                     <p>{{ errors.title[0] }}</p>
                 </b-col>
             </b-row>
-            <!-- ToDo: add color picker -->
+
+            <!-- Background color -->
             <b-form-group
-                label="Color scheme background color:"
+                label="Background color:"
                 label-for="color-scheme-background-color"
             >
                 <b-form-input 
                     id="color-scheme-background-color"
                     v-model="color_scheme.background_color"
-                    placeholder="Enter background color" 
+                    placeholder="Select background color" 
+                    @click="showColorPicker('background_color')"
+                    readonly
                     type="text"
                 ></b-form-input>
             </b-form-group>
@@ -34,14 +42,38 @@
                     <p>{{ errors.background_color[0] }}</p>
                 </b-col>
             </b-row>
+
+            <!-- Text color -->
             <b-form-group
-                label="Color scheme CTA color:"
+                label="Text color:"
+                label-for="color-scheme-text-color"
+            >
+                <b-form-input 
+                    id="color-scheme-text-color"
+                    v-model="color_scheme.text_color"
+                    placeholder="Select text color"
+                    @click="showColorPicker('text_color')"
+                    readonly
+                    type="text"
+                ></b-form-input>
+            </b-form-group>
+            <b-row v-if='errors.text_color' class='error-message'>
+                <b-col cols="12">
+                    <p>{{ errors.text_color[0] }}</p>
+                </b-col>
+            </b-row>
+
+            <!-- CTA color -->
+            <b-form-group
+                label="CTA color:"
                 label-for="color-scheme-cta-color"
             >
                 <b-form-input 
                     id="color-scheme-cta-color"
                     v-model="color_scheme.cta_color"
-                    placeholder="Enter CTA color" 
+                    placeholder="Select CTA color"
+                    @click="showColorPicker('cta_color')"
+                    readonly
                     type="text"
                 ></b-form-input>
             </b-form-group>
@@ -50,6 +82,16 @@
                     <p>{{ errors.cta_color[0] }}</p>
                 </b-col>
             </b-row>
+
+            <b-row>
+                <preview 
+                    class="w-50 mx-auto border"
+                    :background_color="color_scheme.background_color"
+                    :text_color="color_scheme.text_color"
+                    :cta_color="color_scheme.cta_color"
+                />
+            </b-row>
+
             <b-row>
                 <b-col cols="12">
                     <b-button type="submit" variant="success">Save</b-button>
@@ -60,21 +102,37 @@
 </template>
 <script>
     import axios from 'axios';
+    import { Chrome } from 'vue-color';
+    import Preview from './Preview';
+
     export default {
         data() {
             return {
                 color_scheme: {
                     id: 0,
                     title: '',
-                    background_color: '',
-                    cta_color: ''
+                    background_color: '#FFFFFFFF',
+                    text_color: '#000000FF',
+                    cta_color: '#FFFFFFFF'
                 },
+                selected_color: {},
+                colors: {
+                    background_color: {},
+                    text_color: {},
+                    cta_color: {}
+                },
+                opened_color_selector: '',
                 errors: {
                     title: '',
                     background_color: '',
+                    text_color: '',
                     cta_color: ''
                 }
             }
+        },
+        components: {
+            Chrome,
+            Preview
         },
         created(){
             let id = this.$route.params.id;
@@ -98,6 +156,21 @@
                         this.color_scheme = response.data.color_scheme
                     });
                     //Show error aswell
+            },
+            showColorPicker(name) {
+                this.opened_color_selector = name;
+                this.selected_color = this.colors[name];
+                this.$bvModal.show('color-picker');
+            },
+            hideColorPicker() {
+                this.opened_color_selector = '';
+                this.selected_color = {};
+                this.$bvModal.hide('color-picker');
+            },
+            saveColor() {
+                this.colors[this.opened_color_selector] = this.selected_color;
+                this.color_scheme[this.opened_color_selector] = this.selected_color.hex8;
+                this.hideColorPicker();
             }
         }
     }

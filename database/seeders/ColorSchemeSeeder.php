@@ -16,14 +16,16 @@ class ColorSchemeSeeder extends Seeder {
         $color_schemes = [
             [
                 'title' => 'Black and white',
-                'background_color' => '#000000',
-                'cta_color' => '#FFFFFF',
+                'background_color' => '#000000FF',
+                'text_color'    => '#FFFFFFFF',
+                'cta_color' => '#000000FF',
                 'user_uuid' => null
             ],
             [
                 'title' => 'White and black',
-                'background_color' => '#FFFFFF',
-                'cta_color' => '#000000',
+                'background_color' => '#FFFFFFFF',
+                'text_color'    => '#000000FF',
+                'cta_color' => '#FFFFFFFF',
                 'user_uuid' => null
             ]     
         ];

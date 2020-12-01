@@ -11,8 +11,14 @@ class ColorScheme extends Model {
     protected $fillable = [
         'title',
         'background_color',
-        'cta_color',
-        'user_uuid'
+        'text_color',
+        'cta_color'
+    ];
+
+    protected $hidden = [
+        'user_uuid',
+        'created_at',
+        'updated_at'
     ];
     
 }
