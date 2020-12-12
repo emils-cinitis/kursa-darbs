@@ -4,17 +4,22 @@
         <b-col cols="12">
             <b-form @submit="register">
                 <b-form-group
-                    label="Name:"
+                    label="Username:"
                     label-for="user-name"
                 >
                     <b-form-input 
                         id="user-name"
-                        v-model="user.name" 
+                        v-model="user.username" 
                         placeholder="Enter your name" 
                         type="text"
                         required
                     ></b-form-input>
                 </b-form-group>
+                <b-row v-if='errors.username' class='error-message'>
+                    <b-col cols="12">
+                        <p>{{ errors.username[0] }}</p>
+                    </b-col>
+                </b-row>
                 <b-form-group
                     label="Email:"
                     label-for="user-email"
@@ -27,6 +32,11 @@
                         required
                     ></b-form-input>
                 </b-form-group>
+                <b-row v-if='errors.email' class='error-message'>
+                    <b-col cols="12">
+                        <p>{{ errors.email[0] }}</p>
+                    </b-col>
+                </b-row>
                 <b-form-group
                     label="Password:"
                     label-for="user-password"
@@ -37,6 +47,11 @@
                         type="password"
                     ></b-form-input>
                 </b-form-group>
+                <b-row v-if='errors.password' class='error-message'>
+                    <b-col cols="12">
+                        <p>{{ errors.password[0] }}</p>
+                    </b-col>
+                </b-row>
                 <b-form-group
                     label="Password confirmation:"
                     label-for="user-password-confirmation"
@@ -64,10 +79,15 @@
         data() {
             return {
                 user: {
-                    name: '',
+                    username: '',
                     email: '',
                     password: '',
                     password_confirmation: ''
+                },
+                errors: {
+                    username: '',
+                    email: '',
+                    password: ''
                 }
             }
         },
@@ -82,7 +102,7 @@
                             app.$router.push({name: 'login', params: {successRegistrationRedirect: true}})
                         },
                         error: function (res) {
-                            console.log(res.response.data.errors)
+                            app.errors = res.response.data.messages;
                         }
                     });
                 }

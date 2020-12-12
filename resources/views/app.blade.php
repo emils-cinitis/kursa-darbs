@@ -3,9 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Laracore</title>
+    <title>Banner platform</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}"></link>
 </head>
-<body class="antilaliased font-sans bg-gray-200">
+<body>
 
     <main id="app">
         <app></app>

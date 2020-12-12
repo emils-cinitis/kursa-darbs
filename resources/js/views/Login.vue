@@ -16,6 +16,11 @@
                     type="password"
                 ></b-form-input>
             </b-form-group>
+            <b-row v-if='error'>
+                <b-col cols="12">
+                    <p>{{error}}</p>
+                </b-col>
+            </b-row>
             <b-form-group>
                 <b-form-checkbox
                     id="remember_me"
@@ -41,7 +46,8 @@
                     email: '',
                     password: '',
                 },
-                remember_me: false
+                remember_me: false,
+                error: ''
             }
         },
         methods: {
@@ -50,7 +56,9 @@
                 this.$auth.login({
                     data: app.user,
                     success: function() { },
-                    error: function() { },
+                    error: function(error) {
+                        this.error = error.response.data.message;
+                    },
 
                     rememberMe: app.remember_me
                 });

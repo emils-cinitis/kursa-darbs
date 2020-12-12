@@ -1,5 +1,5 @@
 <template>
-    <b-row>
+    <div class="block-with-sidebar">
         <h1>Edit information</h1>
         <b-col cols="12">
             <b-form @submit="edit">
@@ -9,12 +9,17 @@
                 >
                     <b-form-input 
                         id="user-name"
-                        v-model="user.name" 
-                        placeholder="Enter your name" 
+                        v-model="user.username" 
+                        placeholder="Enter your username" 
                         type="text"
                         required
                     ></b-form-input>
                 </b-form-group>
+                <b-row v-if='errors.username' class='error-message'>
+                    <b-col cols="12">
+                        <p>{{ errors.username[0] }}</p>
+                    </b-col>
+                </b-row>
                 <b-form-group
                     label="Email:"
                     label-for="user-email"
@@ -27,6 +32,11 @@
                         required
                     ></b-form-input>
                 </b-form-group>
+                <b-row v-if='errors.email' class='error-message'>
+                    <b-col cols="12">
+                        <p>{{ errors.email[0] }}</p>
+                    </b-col>
+                </b-row>
                 <b-form-group
                     label="Password:"
                     label-for="user-password"
@@ -37,6 +47,11 @@
                         type="password"
                     ></b-form-input>
                 </b-form-group>
+                <b-row v-if='errors.password' class='error-message'>
+                    <b-col cols="12">
+                        <p>{{ errors.password[0] }}</p>
+                    </b-col>
+                </b-row>
                 <b-form-group
                     label="Password confirmation:"
                     label-for="user-password-confirmation"
@@ -48,26 +63,31 @@
                     ></b-form-input>
                 </b-form-group>
                 <b-row>
-                    <b-col cols="12">
-                        <b-button type="submit" variant="success">Edit</b-button>
+                    <b-col cols="12" class="btn-container">
+                        <b-button type="submit" class="btn-form" variant="success">Edit</b-button>
                     </b-col>
                 </b-row>
             </b-form>
         </b-col>
-    </b-row>
+    </div>
 </template>
 
 <script>
-import axios from 'axios';
+    import axios from 'axios';
 
     export default {
         data() {
             return {
                 user: {
-                    name: '',
+                    username: '',
                     email: '',
                     password: '',
                     password_confirmation: ''
+                },
+                errors: {
+                    username: '',
+                    email: '',
+                    password: ''
                 }
             }
         },
@@ -80,9 +100,6 @@ import axios from 'axios';
                     .then((response) => {
                         this.user = response.data.data;
                     })
-                    .catch(error => {
-                        console.log(error)
-                    });
             },
             async edit(event){
                 event.preventDefault();
@@ -91,8 +108,8 @@ import axios from 'axios';
                         .then((response) => {
                             console.log(response);
                         })
-                        .catch(error => {
-                            console.log(error)
+                        .catch(res => {
+                            this.errors = res.response.data.messages;
                         });
                 }
             },

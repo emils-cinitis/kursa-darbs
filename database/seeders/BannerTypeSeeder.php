@@ -23,11 +23,6 @@ class BannerTypeSeeder extends Seeder {
                 'title' => 'Tower',
                 'width' => 300,
                 'height' => 600
-            ],
-            [
-                'title' => 'Square',
-                'width' => 300,
-                'height' => 250
             ]
         ];
 

@@ -1,26 +1,26 @@
 import VueRouter from 'vue-router'
 
 import Home from './views/Home.vue'
-import About from './views/About.vue'
 import Register from './views/Register.vue'
 import Login from './views/Login.vue'
-//import BannerIndex from './views/Banners/Index.vue'
 import ProfileIndex from './views/Profile/Index.vue'
 import ProfileEdit from './views/Profile/Edit.vue'
+import ProfileDelete from './views/Profile/Delete.vue'
+import BannerIndex from './views/Banners/Index.vue'
+import BannerAll from './views/Banners/ShowAll.vue'
+import BannerForm from './views/Banners/Form.vue'
+import ColorSchemeIndex from './views/ColorSchemes/Index.vue';
+import ColorSchemesAll from './views/ColorSchemes/ShowAll.vue';
+import ColorSchemesForm from './views/ColorSchemes/Form.vue';
+import TemplateIndex from './views/Templates/Index.vue';
+import TemplatesAll from './views/Templates/ShowAll.vue';
+import TemplatesForm from './views/Templates/Form.vue';
 
 const routes = [
     {
         path: '/',
         name: 'home',
         component: Home,
-        meta: {
-            auth: undefined
-        }
-    },
-    {
-        path: '/about',
-        name: 'about',
-        component: About,
         meta: {
             auth: undefined
         }
@@ -56,17 +56,119 @@ const routes = [
                 meta: {
                     auth: true
                 },
+            },
+            {
+                path: 'delete',
+                name: 'delete-user',
+                component: ProfileDelete,
+                meta: {
+                    auth: true
+                },
             }
         ]
     },
-    // ({
-    //     path: '/banners',
-    //     name: 'banners',
-    //     component: BannerIndex,
-    //     meta: {
-    //         auth: true
-    //     }
-    // },
+    {
+        path: '/banners',
+        name: 'banners',
+        component: BannerIndex,
+        meta: {
+            auth: true
+        },
+        children: [
+            {
+                path: 'all',
+                name: 'all-banners',
+                component: BannerAll,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'add',
+                name: 'add-banner',
+                component: BannerForm,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'edit/:uuid',
+                name: 'edit-banner',
+                component: BannerForm,
+                meta: {
+                    auth: true
+                }
+            }
+        ]
+    },
+    {
+        path: '/color-schemes',
+        name: 'color-schemes',
+        component: ColorSchemeIndex,
+        meta: {
+            auth: true
+        },
+        children: [
+            {
+                path: 'all',
+                name: 'all-color-schemes',
+                component: ColorSchemesAll,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'add',
+                name: 'add-color-scheme',
+                component: ColorSchemesForm,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'edit/:id',
+                name: 'edit-color-scheme',
+                component: ColorSchemesForm,
+                meta: {
+                    auth: true
+                }
+            }
+        ]
+    },
+    {
+        path: '/tempaltes',
+        name: 'tempaltes',
+        component: TemplateIndex,
+        meta: {
+            auth: true
+        },
+        children: [
+            {
+                path: 'all',
+                name: 'all-templates',
+                component: TemplatesAll,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'add',
+                name: 'add-template',
+                component: TemplatesForm,
+                meta: {
+                    auth: true
+                },
+            },
+            {
+                path: 'edit/:id',
+                name: 'edit-template',
+                component: TemplatesForm,
+                meta: {
+                    auth: true
+                }
+            }
+        ]
+    },
 ];
 
 const router = new VueRouter({

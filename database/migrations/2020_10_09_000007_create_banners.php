@@ -13,10 +13,12 @@ class CreateBanners extends Migration {
      */
     public function up() {
         Schema::create('banners', function (Blueprint $table) {
-            $table->uuid('uuid');
+            $table->uuid('uuid')->primary();
             $table->string('name');
-            $table->string('main_text');
-            $table->string('sub_text');
+            $table->string('main_text')->nullable();
+            $table->string('sub_text')->nullable();
+            $table->string('image')->nullable();
+            $table->string('call_to_action')->nullable();
             $table->foreignId('color_scheme_id')->constrained('color_schemes');
             $table->foreignUuid('created_by')->references('uuid')->on('users');
             $table->foreignId('template_id')->constrained('templates');

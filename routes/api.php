@@ -4,6 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\BannerController;
+use App\Http\Controllers\api\ColorSchemeController;
+use App\Http\Controllers\api\TemplateController;
+use App\Http\Controllers\api\BannerTypeController;
+use App\Http\Controllers\api\BannerBlockController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,10 +29,24 @@ Route::namespace('api')->group(function () {
     Route::get('/user/refresh', [ UserController::class, 'refresh' ] );
 
     Route::middleware('auth:api')->group(function () {
-        Route::get('/user/all', [ UserController::class, 'userInfo' ] );
-        Route::post('logout', [ UserController::class, 'logout' ] );
+        Route::get('/user/all', [ UserController::class, 'get' ] );
+        Route::post('/user/logout', [ UserController::class, 'logout' ] );
+        Route::delete('/user/delete', [ UserController::class, 'delete' ]);
 
-        Route::get('/user/banners', [ BannerController::class, 'getUserBanners' ] );
-        Route::post('/user/banners', [ BannerController::class, 'saveBanner' ] );
+        Route::get('/user/banners', [ BannerController::class, 'getAll' ] );
+        Route::get('/user/banner', [ BannerController::class, 'get' ] );
+        Route::post('/user/banners', [ BannerController::class, 'store' ] );
+
+        Route::get('/banner-types', [ BannerTypeController::class, 'get' ] );
+
+        Route::get('/banner-blocks', [ BannerBlockController::class, 'get' ] );
+
+        Route::get('/user/color-schemes', [ ColorSchemeController::class, 'getAll' ]);
+        Route::get('/user/color-scheme', [ ColorSchemeController::class, 'get' ]);
+        Route::post('/user/color-scheme', [ ColorSchemeController::class, 'store' ]);
+
+        Route::get('/user/templates', [ TemplateController::class, 'getAll' ]);
+        Route::get('/user/template', [ TemplateController::class, 'get' ]);
+        Route::post('/user/template', [ TemplateController::class, 'store' ]);
     });
 });

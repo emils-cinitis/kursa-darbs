@@ -1,7 +1,7 @@
 <template>
     <b-row>
         <side-navigation class="col-2" :elements='side_navigation_elements' />
-        <router-view class="col-10"></router-view>
+        <router-view class="col-10" />
     </b-row>
 </template>
 
@@ -12,8 +12,8 @@
         data() {
             return {
                 side_navigation_elements: [
-                    { name: 'Edit user information', router_name: 'edit-user' },
-                    { name: 'Delete user', router_name: 'delete-user' }
+                    { name: 'All banners', router_name: 'all-banners' },
+                    { name: 'Add banner', router_name: 'add-banner' }
                 ],
             }
         },

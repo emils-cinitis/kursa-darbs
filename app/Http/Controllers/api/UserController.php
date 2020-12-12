@@ -25,22 +25,20 @@ class UserController extends Controller {
         if(Auth::user() == null){
             //Create user
             $validator = Validator::make($request->all(), [
-                'name'      => 'required',
+                'username'  => 'required|unique:users',
                 'email'     => 'required|unique:users|email',
                 'password'  => 'required|confirmed',
             ]);
             
             if ($validator->fails()) {
-                return response()->json(
-                    [
-                        'status'    => 'error', 
-                        'message'   => $validator->messages() //ToDo: Fix
-                    ], 422
-                );
+                return response()->json([
+                    'status'    => 'error', 
+                    'messages'  => $validator->messages()
+                ], 422);
             }
             
             $user_info['uuid']= Str::uuid()->toString();
-            if(!isset($user_info['role'])) $user_info['role'] = 2;
+            if(!isset($user_info['user_role'])) $user_info['user_role'] = 2;
             $user_info['password'] = Hash::make($request->password);
 
             try {
@@ -65,27 +63,26 @@ class UserController extends Controller {
             }
         } else {
             //Edit user
+            $user = User::find(Auth::user()->uuid);
+
             $validatableData = [
-                'name'      => 'required',
+                'username'  => 'required',
                 'email'     => 'required|email',
             ];
 
-            if(!empty($request->input('password'))){
-                array_push($validatableData, ['password'  => 'required|confirmed']);
-            }
+            if($request->input('username') != $user->username) $validatableData['username'] = 'required|unique:users';
+            if($request->input('email') != $user->email) $validatableData['email'] = 'required|email|unique:users';
+            if(!empty($request->input('password'))) array_push($validatableData, ['password'  => 'required|confirmed']);
 
             $validator = Validator::make($request->all(), $validatableData);
             if ($validator->fails()) {
-                return response()->json(
-                    [
-                        'status'    => 'error', 
-                        'message'   => '??' //ToDo: Fix
-                    ], 422
-                );
+                return response()->json([
+                    'status'    => 'error', 
+                    'messages'  => $validator->messages()
+                ], 422);
             }
 
-            $user = User::find(Auth::user()->uuid);
-            $user->name = $request->input('name');
+            $user->username = $request->input('username');
             $user->email = $request->input('email');
 
             if(!empty($request->input('password'))){
@@ -115,6 +112,28 @@ class UserController extends Controller {
     }
 
 
+    public function delete(Request $request){
+        try {
+            $user = User::find(Auth::user()->uuid);
+
+            $user->deleteAllBanners();
+            $user->delete();
+
+            return response()->json([
+                'status'    => 'success', 
+                'message'   => 'User deleted'
+            ], 200);
+
+        } catch(Exception $e) {
+
+            return response()->json([
+                'status'    => 'error', 
+                'message'   => 'Cannot delete user'
+            ], 500);
+        }
+    }
+
+
     /**
      * Login user and return a token
      * @param Request $request
@@ -123,10 +142,10 @@ class UserController extends Controller {
     public function login(Request $request) {
         $credentials = $request->only('email', 'password');
         if (!$token = JWTAuth::attempt($credentials)) {
-                return response([
-                    'status' => 'error',
-                    'message' => 'Invalid Credentials.'
-                ], 422);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email and / or password is wrong'
+            ], 422);
         }
         return response()->json(['status' => 'successs'], 200)
             ->header('Access-Control-Expose-Headers', 'Authorization')
@@ -160,7 +179,7 @@ class UserController extends Controller {
     /**
      * Get authenticated user
      */
-    public function userInfo(Request $request) {
+    public function get(Request $request) {
         try {
             $user = User::find(Auth::user()->uuid);
             return response()->json([
@@ -181,7 +200,7 @@ class UserController extends Controller {
      * Refresh JWT token
      */
     public function refresh() {
-        try{
+        try {
             if ($token = $this->guard()->refresh()) {
                 return response()
                     ->json(['status' => 'successs'], 200)

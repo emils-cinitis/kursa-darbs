@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div class="side-navigation">
         <ul>
             <li v-for="(element, key) in elements" :key='key'>
-                <a @click="$router.push({name: element.router_name})">{{ element.name }}</a>
+                <router-link :to="{ name: element.router_name }">{{ element.name }}</router-link>
             </li>
         </ul>
     </div>
