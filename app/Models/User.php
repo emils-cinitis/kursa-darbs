@@ -58,7 +58,7 @@ class User extends Authenticatable implements JWTSubject {
     }
 
     public function colorSchemesSelect() {
-        return $this->hasMany('App\Models\ColorScheme', 'user_uuid')->select(array('id', 'title'));
+        return $this->hasMany('App\Models\ColorScheme', 'user_uuid');
     }
 
     public function templatesSelect() {

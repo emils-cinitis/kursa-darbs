@@ -15,6 +15,7 @@ import ColorSchemesForm from './views/ColorSchemes/Form.vue';
 import TemplateIndex from './views/Templates/Index.vue';
 import TemplatesAll from './views/Templates/ShowAll.vue';
 import TemplatesForm from './views/Templates/Form.vue';
+import PublicBanner from './views/Public/Banner.vue';
 
 const routes = [
     {
@@ -168,6 +169,11 @@ const routes = [
                 }
             }
         ]
+    },
+    {
+        path: '/banner/:uuid',
+        name: 'public-banner',
+        component: PublicBanner
     },
 ];
 

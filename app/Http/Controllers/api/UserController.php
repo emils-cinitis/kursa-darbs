@@ -51,7 +51,7 @@ class UserController extends Controller {
                     ], 200
                 );
 
-            } catch(Exception $e) {
+            } catch(\Exception $e) {
 
                 return response()->json(
                     [
@@ -99,7 +99,7 @@ class UserController extends Controller {
                     ], 200
                 );
 
-            } catch(Exception $e) {
+            } catch(\Exception $e) {
 
                 return response()->json(
                     [
@@ -124,7 +124,7 @@ class UserController extends Controller {
                 'message'   => 'User deleted'
             ], 200);
 
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
 
             return response()->json([
                 'status'    => 'error', 
@@ -166,7 +166,7 @@ class UserController extends Controller {
                 'message' => 'Logged out successfully'
             ], 200);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             return response([
                 'status' => 'error',
@@ -187,7 +187,7 @@ class UserController extends Controller {
                 'data'      => $user
             ]);
 
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
 
             return response()->json([
                 'status'    => 'error',
@@ -207,7 +207,7 @@ class UserController extends Controller {
                     ->header('Access-Control-Expose-Headers', 'Authorization')
                     ->header('Authorization', $token);
             }
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             return response()->json(['error' => 'refresh_token_error'], 401);
         }
         return response()->json(['error' => 'refresh_token_error'], 401);

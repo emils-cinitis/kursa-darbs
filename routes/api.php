@@ -28,6 +28,8 @@ Route::namespace('api')->group(function () {
 
     Route::get('/user/refresh', [ UserController::class, 'refresh' ] );
 
+    Route::get('/banner', [ BannerController::class, 'getPublicBanner' ] );
+
     Route::middleware('auth:api')->group(function () {
         Route::get('/user/all', [ UserController::class, 'get' ] );
         Route::post('/user/logout', [ UserController::class, 'logout' ] );
@@ -47,6 +49,7 @@ Route::namespace('api')->group(function () {
 
         Route::get('/user/templates', [ TemplateController::class, 'getAll' ]);
         Route::get('/user/template', [ TemplateController::class, 'get' ]);
+        Route::get('/user/template/info', [ TemplateController::class, 'getTemplateBlocks' ]);
         Route::post('/user/template', [ TemplateController::class, 'store' ]);
     });
 });
