@@ -1,7 +1,7 @@
 <template>
     <b-row>
         <side-navigation class="col-2" :elements='side_navigation_elements' />
-        <router-view class="col-10"></router-view>
+        <router-view class="col-10" />
     </b-row>
 </template>
 

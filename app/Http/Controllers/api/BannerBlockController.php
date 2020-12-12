@@ -17,7 +17,7 @@ class BannerBlockController extends Controller {
             try {
                 $template = Template::findOrFail(1); //Select first template as default
 
-            } catch(Exception $e) {
+            } catch(\Exception $e) {
                 return response()->json([
                     'status' => 'error', 
                     'message' => 'Cannot get default template'
@@ -49,7 +49,7 @@ class BannerBlockController extends Controller {
                     array_push($response_array[$banner_type], $block_reformatted);
                 }
 
-            } catch(Exception $e) {
+            } catch(\Exception $e) {
                 return response()->json([
                     'status' => 'error', 
                     'message' => 'Cannot get default template blocks'

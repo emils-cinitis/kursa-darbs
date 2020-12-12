@@ -13,7 +13,7 @@ class CreateBanners extends Migration {
      */
     public function up() {
         Schema::create('banners', function (Blueprint $table) {
-            $table->uuid('uuid');
+            $table->uuid('uuid')->primary();
             $table->string('name');
             $table->string('main_text')->nullable();
             $table->string('sub_text')->nullable();

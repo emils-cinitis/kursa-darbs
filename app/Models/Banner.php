@@ -21,6 +21,9 @@ class Banner extends Model {
         'name',
         'main_text',
         'sub_text',
+        'call_to_action',
+        'color_scheme_id',
+        'template_id',
         'created_by'
     ];
 
@@ -34,5 +37,13 @@ class Banner extends Model {
 
     public function deleteAllInfo() {
         $this->delete();
+    }
+
+    public function template() {
+        return $this->belongsTo('App\Models\Template');
+    }
+
+    public function colorScheme() {
+        return $this->belongsTo('App\Models\ColorScheme');
     }
 }
