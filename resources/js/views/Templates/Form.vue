@@ -34,7 +34,7 @@
             <!-- Canvases for Banners -->
             <div v-for="(banner_type, key) in template.banner_types" :key="key" class="pb-3">
                 <div v-if="banner_type.enabled && banner_types[key]" class="d-flex">
-                    <div :ref="key" class="template-block">
+                    <div :ref="key" :class="'template-block template-block-' + key">
                         <div :class="'position-relative mx-auto preview-' + key"
                             :style="
                             'width: ' + (banner_types[key].width * banner_type.scale) + 'px;' +
@@ -69,9 +69,52 @@
                         <div class="position-absolute bg-white"
                             v-for="(block, key1) in banner_type.blocks" :key="key1" @mousedown="mouseDownList($event, key1, key)" 
                             :style="'top:' + ((key1 * 30) + ((block.block_type.title == draggable_element.list) ? list_offset : '')) + 'px; border: 1px solid'">
-                            <a @click='toggleBlock(key1, key)'>Click</a>
+                            <a @click='toggleBlock(key1, key)'>
+                                <span v-if="block.enabled">✔</span>
+                                <span v-else>✖</span>
+                            </a>
                             <span>{{ block.block_type.title }}</span>
                         </div>
+                        <b-row 
+                            v-if="selected_block.block_key !== -1 && selected_block.type == key" 
+                            :style="'margin-top:' + ((template.banner_types[selected_block.type].blocks.length * 30) + 10) + 'px'"
+                        >
+                            <label class="col-4 my-auto" :for="'template-left-' + key">Left</label>
+                            <b-form-input 
+                                :id="'template-left-' + key"
+                                class="col-8"
+                                v-model.number="template.banner_types[selected_block.type].blocks[selected_block.block_key].left_offset" 
+                                type="number"
+                                @change="checkOffsets('left')"
+                            ></b-form-input>
+
+                            <label class="col-4 my-auto" :for="'template-top-' + key">Top</label>
+                            <b-form-input 
+                                :id="'template-top-' + key"
+                                class="col-8"
+                                v-model.number="template.banner_types[selected_block.type].blocks[selected_block.block_key].top_offset" 
+                                type="number"
+                                @change="checkOffsets('top')"
+                            ></b-form-input>
+
+                            <label class="col-4 my-auto" :for="'template-width-' + key">Width</label>
+                            <b-form-input 
+                                :id="'template-width-' + key"
+                                class="col-8"
+                                v-model.number="template.banner_types[selected_block.type].blocks[selected_block.block_key].width" 
+                                type="number"
+                                @change="checkOffsets('width')"
+                            ></b-form-input>
+
+                            <label  class="col-4 my-auto" :for="'template-height-' + key">Height</label>
+                            <b-form-input 
+                                :id="'template-height-' + key"
+                                class="col-8"
+                                v-model.number="template.banner_types[selected_block.type].blocks[selected_block.block_key].height" 
+                                type="number"
+                                @change="checkOffsets('height')"
+                            ></b-form-input>
+                        </b-row>
                     </div>
                 </div>
             </div>
@@ -122,6 +165,10 @@
                         top: 0,
                         left: 0
                     }
+                },
+                selected_block: {
+                    type: '',
+                    block_key: -1
                 },
                 banner_types: { },
                 list_offset: 0,
@@ -180,7 +227,21 @@
                     .then((response) => {
                         //ToDo: success
                     }).catch((error) => {
-                        //ToDo: error
+                        if(error.response.data.messages) {
+                            this.errors = error.response.data.messages;
+                        } else if(error.response.data.message) {
+                            let error_message = 'An unexpected error occured!';
+                            if(error.response.data.message) {
+                                error_message = error.response.data.message;
+                            }
+                            this.$bvToast.toast(error_message, {
+                                title: 'Error',
+                                variant: 'danger',
+                                solid: true,
+                                appendToast: true,
+                                autoHideDelay: 10000
+                            });
+                        }
                     });
             },
 
@@ -217,6 +278,10 @@
                     event.preventDefault();
 
                     let block = this.template.banner_types[type].blocks[key];
+
+                    //Set sidebar info
+                    this.selected_block.type = type;
+                    this.selected_block.block_key = key;
 
                     //Set block starting info
                     this.draggable_element.key = key;
@@ -272,6 +337,10 @@
 
                 let block = this.template.banner_types[type].blocks[key];
 
+                //Set sidebar info
+                this.selected_block.type = type;
+                this.selected_block.block_key = key;
+
                 this.draggable_element.key = key;
                 this.draggable_element.type = type;
                 this.draggable_element.x = event.clientX;
@@ -289,26 +358,53 @@
                 let movementY = (this.draggable_element.y - event.clientY) / scale;
                 let block = this.template.banner_types[this.draggable_element.type].blocks[this.draggable_element.key];
 
-                if(block.width + movementX > 30){
+                //Make sure the block is atleast 30px wide
+                if(
+                    (this.draggable_element.drag.left == 1 && block.width + movementX > 30) ||
+                    (this.draggable_element.drag.left == 0 && block.width - movementX > 30)
+                ){
+                    let newWidth = 0,
+                        newLeft = 0;
+
                     if(this.draggable_element.drag.left == 0) {
-                        block.width -= movementX;
+                        newWidth = block.width - movementX;
+                        newLeft = block.left_offset;
                     } else {
-                        block.width += movementX;
-                        block.left_offset -= movementX;
+                        newWidth = block.width + movementX;
+                        newLeft = block.left_offset - movementX;
                     }
 
-                    this.draggable_element.x = event.clientX;
+                    //Make sure the block is not out of bounds
+                    if(newLeft > 0 && newWidth + newLeft <= this.banner_types[this.draggable_element.type].width) {
+                        block.width = newWidth;
+                        block.left_offset = newLeft;
+                        this.draggable_element.x = event.clientX;
+                    }
                 }
 
-                if(block.height + movementY > 30) {
+                //Make sure the block is atleast 30px high
+                if(
+                    (this.draggable_element.drag.top == 1 && block.height + movementY > 30) ||
+                    (this.draggable_element.drag.top == 0 && block.height - movementY > 30)
+                ) {
+                    let newHeight = 0,
+                        newTop = 0;
+
                     if(this.draggable_element.drag.top == 0) {
-                        block.height -= movementY;
+                        newHeight = block.height - movementY;
+                        newTop = block.top_offset;
                     } else {
-                        block.height += movementY;
-                        block.top_offset -= movementY;
+                        newHeight = block.height + movementY;
+                        newTop = block.top_offset - movementY;
                     }
 
-                    this.draggable_element.y = event.clientY;
+
+                    //Make sure the block is not out of bounds
+                    if(newTop > 0 && newHeight + newTop <= this.banner_types[this.draggable_element.type].height) {
+                        block.height = newHeight;
+                        block.top_offset = newTop;
+                        this.draggable_element.y = event.clientY;
+                    }
                 }
             },
             /* End of dragging block */
@@ -420,6 +516,44 @@
                 };
                 this.list_offset = 0;
             },
+
+            //Check if manual input doesn't put elements out of bounds
+            checkOffsets(side) {
+                let block = this.template.banner_types[this.selected_block.type].blocks[this.selected_block.block_key];
+
+                let maxWidth = this.banner_types[this.selected_block.type].width,
+                    maxHeight = this.banner_types[this.selected_block.type].height,
+                    xOffset = block.width + block.left_offset - maxWidth,
+                    yOffset = block.top_offset + block.height - maxHeight;
+
+                if(side == 'left' || side == 'width') {
+                    if(xOffset > 0) {
+                        if(side == 'left') {
+                            block.left_offset -= xOffset;
+                        } else if(side == 'width') {
+                            block.width -= xOffset;
+                        }
+                    } else if (block.left_offset < 0) {
+                        block.left_offset = 0;
+                    } else if (block.width < 30) {
+                        block.width = 30;
+                        this.checkOffsets(side);
+                    }
+                } else if(side == 'right' || side == 'height') {
+                    if(yOffset > 0) {
+                        if(side == 'right') {
+                            block.right_offset -= yOffset;
+                        } else if(side == 'height') {
+                            block.height -= yOffset;
+                        }
+                    } else if (block.top_offset < 0) {
+                        block.top_offset = 0;
+                    } else if (block.height < 30) {
+                        block.height = 30;
+                        this.checkOffsets(side);
+                    }
+                }
+            }
         }
     }
 
