@@ -14,9 +14,9 @@ class ColorSchemeController extends Controller {
 
     private function getDefaultColorSchemes() {
         try {
-            $color_schemes = ColorScheme::where('user_uuid', NULL)->get(['id','title']);
+            $color_schemes = ColorScheme::where('user_uuid', NULL)->get();
             return $color_schemes;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -24,7 +24,7 @@ class ColorSchemeController extends Controller {
     public function getAll(Request $request) {
         try {
             $user = User::find(Auth::user()->uuid);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             
             return response()->json([
                 'status'    => 'error',
@@ -59,7 +59,7 @@ class ColorSchemeController extends Controller {
                 'status'        => 'success',
                 'color_schemes' => $color_schemes
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             return response()->json([
                 'status'    => 'error',
@@ -79,6 +79,7 @@ class ColorSchemeController extends Controller {
 
         try {
             $color_scheme = ColorScheme::findOrFail($request->input('id'));
+            $banners = $color_scheme->banners()->get(['uuid', 'name']);
 
             if($color_scheme->user_uuid !== Auth::user()->uuid) {
                 return response()->json([
@@ -86,24 +87,28 @@ class ColorSchemeController extends Controller {
                     'message'   => 'Color scheme is not created by user'
                 ], 422);
             }
+            $color_scheme_array = $color_scheme = array_merge(
+                $color_scheme->toArray(), 
+                [ 'banners' => $banners ]
+            );
 
             return response()->json([
                 'status'        => 'success',
-                'color_scheme'  => $color_scheme
+                'color_scheme'  => $color_scheme_array
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             return response()->json([
                 'status'    => 'error',
                 'message'   => 'Cannot retreive color scheme'
-            ], 422);
+            ], 500);
         }
     }
 
     public function store(Request $request) {
         try {
             $user_uuid = Auth::user()->uuid;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             
             return response()->json([
                 'status'    => 'error',
@@ -128,7 +133,11 @@ class ColorSchemeController extends Controller {
         try {
             if(empty($request->input('id'))) {
                 //Create
-                $color_scheme_variables = array_merge($request->all(), ['user_uuid' => $user_uuid] );
+                $color_scheme_variables = array_merge(
+                    $request->all(), 
+                    ['user_uuid' => $user_uuid] 
+                );
+                
                 $color_scheme = ColorScheme::create($color_scheme_variables);
 
                 return response()->json([
@@ -157,7 +166,7 @@ class ColorSchemeController extends Controller {
                     'message'   => 'Updated color scheme successfully'
                 ], 200);
             }
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
 
             return response()->json([
                 'status'    => 'error',

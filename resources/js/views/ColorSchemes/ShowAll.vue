@@ -8,11 +8,11 @@
                         {{ color_scheme.title }}
                     </div>
                     <router-link :to="{name: 'edit-color-scheme', params: { id: color_scheme.id } }" class="btn btn-primary my-2">Edit</router-link>
-                    <button 
+                    <b-button 
                         v-if="typeof color_scheme.preview == 'undefined' || color_scheme.preview == false"
                         @click="setPreview(key, color_scheme)" 
                         class="btn btn-primary my-2"
-                    >Preview</button>
+                    >Preview</b-button>
                     <preview 
                         v-else
                         :background_color="color_scheme.background_color"
@@ -46,7 +46,7 @@
                 await axios.get("/user/color-schemes")
                     .then((response) => {
                         this.color_schemes = response.data.color_schemes;
-                    });
+                    }); //ToDo error
             },
             setPreview(key, color_scheme) {
                 color_scheme.preview = true;

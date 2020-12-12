@@ -12,7 +12,8 @@ class ColorScheme extends Model {
         'title',
         'background_color',
         'text_color',
-        'cta_color'
+        'cta_color',
+        'user_uuid'
     ];
 
     protected $hidden = [
@@ -20,5 +21,9 @@ class ColorScheme extends Model {
         'created_at',
         'updated_at'
     ];
+
+    public function banners() {
+        return $this->hasMany('App\Models\Banner');
+    }
     
 }

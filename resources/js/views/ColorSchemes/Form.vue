@@ -1,9 +1,21 @@
 <template>
     <div class="block-with-sidebar">
-        <b-modal id="color-picker" hide-footer title="Color picker">
+        <b-modal id="color-picker" hide-footer title="Color picker" no-close-on-backdrop @hide="hideColorPicker">
             <chrome v-model="selected_color" />
             <b-button class="mt-3" variant="outline-danger" block @click="hideColorPicker">Cancel</b-button>
             <b-button class="mt-3" variant="success" block @click="saveColor">Save</b-button>
+        </b-modal>
+        <b-modal id="warning" hide-footer title="Color Scheme in use" no-close-on-backdrop>
+            <h3>This color scheme is already in use!</h3>
+            <p>By modifying this color scheme, all existing banners will change their original colors to the new ones</p>
+            <p>Used in these banners: </p>
+            <ul>
+                <li v-for='(banner, key) in color_scheme.banners' :key='key'>
+                    <router-link :to="{name: 'edit-banner', params: { uuid: banner.uuid } }">{{banner.name}}</router-link>
+                </li>
+            </ul>
+            <b-button class="mt-3" block @click="$bvModal.hide('warning');">Cancel</b-button>
+            <b-button class="mt-3" variant="outline-danger" block @click="storeColorSchemeAxios">Save</b-button>
         </b-modal>
         <b-form @submit="saveColorScheme">
             <b-form-group
@@ -142,20 +154,28 @@
             }
         },
         methods: {
-            async saveColorScheme(event) {
+            saveColorScheme(event) {
                 event.preventDefault();
-                await axios.post("/user/color-scheme", this.color_scheme)
-                    .then((response) => {
-                        // Show success
-                    });
-                    //Show error aswell
+                if(this.color_scheme.banners && this.color_scheme.banners.length > 0) {
+                    this.$bvModal.show('warning');
+                } else {
+                    this.storeColorSchemeAxios();
+                }
+            },
+            async storeColorSchemeAxios() {
+                //ToDo: validate inputs
+                 await axios.post("/user/color-scheme", this.color_scheme)
+                        .then((response) => {
+                            // Show success ToDo:
+                        });
+                        //Show error aswell ToDo:
             },
             async getColorSchemeInfo(id) {
                 await axios.get("/user/color-scheme", { params: { id: id } } )
                     .then((response) => {
                         this.color_scheme = response.data.color_scheme
                     });
-                    //Show error aswell
+                    //Show error aswell ToDo:
             },
             showColorPicker(name) {
                 this.opened_color_selector = name;
