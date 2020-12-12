@@ -22,7 +22,7 @@ class BannerTypeController extends Controller {
                 'status'        => 'success', 
                 'banner_types'  => $banner_types_reformatted
             ], 200);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             return response()->json([
                 'status' => 'error', 
                 'message' => 'Cannot get banner types'
