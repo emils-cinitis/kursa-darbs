@@ -5,34 +5,70 @@
         </b-modal>
         <h1>All banners</h1>
         <div v-if="banners.length > 0" class="banner-page-container">
-            <b-row v-for="(banner, key) in banners" :key="key">
+            <b-row v-for="(banner, key) in banners" :key="key" class="banner-page-row">
                 <b-col cols="12">
                     <b-row>
-                        <b-col cols="12">
-                            <span class="banner-title">Title: {{banner.name}}</span>
+                        <b-col cols="6">
+                            <b-row>
+                                <b-col cols="12">
+                                    <span class="banner-title">Title: <b>{{banner.name}}</b></span>
+                                </b-col>
+                                <b-col cols="6">
+                                    <span>Template types: 
+                                        <b>
+                                            <span v-for="(type, key1) in banner.banner_types" :key="key1">
+                                                {{ type }}
+                                                <span v-if="key1 != banner.banner_types.length - 1">,</span>
+                                            </span>
+                                        </b>
+                                    </span>
+                                </b-col>
+                                <b-col cols="6">
+                                    <span>Color scheme: <b>{{ banner.color_scheme.title }} </b> </span>
+                                </b-col>
+                                <b-col cols="6">
+                                    <span>Unique views: <b>ToDo</b></span>
+                                </b-col>
+                                <b-col cols="6">
+                                    <span>Downloads: <b>ToDo</b></span>
+                                </b-col>
+                            </b-row>
                         </b-col>
                         <b-col cols="6">
-                            <span>Template types: 
-                                <span v-for="(type, key1) in banner.banner_types" :key="key1">
-                                    {{ type }}
-                                </span>
-                            </span>
-                        </b-col>
-                        <b-col cols="6">
-                            <span>Color scheme: {{ banner.color_scheme.title }}</span>
-                        </b-col>
-                        <b-col cols="6">
-                            <span>Unique views: ToDo</span>
-                        </b-col>
-                        <b-col cols="6">
-                            <span>Downloads: ToDo</span>
-                        </b-col>
-                        <b-col cols="12">
-                            <router-link :to="{name: 'edit-banner', params: { uuid: banner.uuid } }" class="btn btn-primary mr-2">Edit</router-link>
-                            <router-link :to="{name: 'public-banner', params: { uuid: banner.uuid } }" class="btn btn-secondary mr-2">Open public link</router-link>
-                            <b-button @click="setPreview(key)">Preview</b-button>
-                            <b-button>Download ToDo</b-button>
-                            <b-button>Delete ToDo</b-button>
+                            <b-row class="h-100">
+                                <b-col cols="3" class="my-auto">
+                                    <b-button 
+                                        variant="theme-blue-dark" 
+                                        class="w-100 text-white" 
+                                        @click="setPreview(key)"
+                                    >Preview</b-button>
+                                </b-col>
+
+                                <b-col cols="3" class="my-auto">
+                                    <router-link 
+                                        :to="{name: 'public-banner', params: { uuid: banner.uuid } }" 
+                                        class="w-100 btn btn-theme-blue-dark text-white"
+                                    >Open</router-link>
+                                </b-col>
+
+                                <b-col cols="3" class="my-auto">
+                                    <b-button 
+                                        variant="theme-blue-dark" 
+                                        class="w-100 text-white"
+                                    >Download</b-button>
+                                </b-col>
+
+                                <b-col cols="3" class="my-auto">
+                                    <b-dropdown 
+                                        text="More"
+                                        variant="theme-blue-light text-white"
+                                        class="banner-dropdown"
+                                    >
+                                        <router-link :to="{name: 'edit-banner', params: { uuid: banner.uuid } }" class="w-100 mb-1 btn btn-theme-blue-light text-white">Edit</router-link>
+                                        <b-button variant="danger" class="w-100">Delete ToDo</b-button>
+                                    </b-dropdown>
+                                </b-col>
+                            </b-row>
                         </b-col>
                     </b-row>
                 </b-col>
@@ -63,7 +99,7 @@
                 await axios.get("/user/banners")
                     .then((response) => {
                         this.banners = response.data.banners;
-                    });
+                    }); //ToDo: error
             },
             setPreview(key) {
                 if(typeof this.banners[key] != 'undefined') {

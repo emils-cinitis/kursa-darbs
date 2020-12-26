@@ -1,8 +1,8 @@
 <template>
     <b-row>
-        <h1>Register</h1>
         <b-col cols="12">
-            <b-form @submit="register">
+            <b-form id="register-form" @submit="register" :class="'form-small mx-auto ' + ((modal) ? 'no-border' : 'p-3')">
+                <h1 v-if="!modal">Register to site</h1>
                 <b-form-group
                     label="Username:"
                     label-for="user-name"
@@ -20,6 +20,7 @@
                         <p>{{ errors.username[0] }}</p>
                     </b-col>
                 </b-row>
+
                 <b-form-group
                     label="Email:"
                     label-for="user-email"
@@ -37,6 +38,7 @@
                         <p>{{ errors.email[0] }}</p>
                     </b-col>
                 </b-row>
+
                 <b-form-group
                     label="Password:"
                     label-for="user-password"
@@ -52,6 +54,7 @@
                         <p>{{ errors.password[0] }}</p>
                     </b-col>
                 </b-row>
+
                 <b-form-group
                     label="Password confirmation:"
                     label-for="user-password-confirmation"
@@ -90,6 +93,9 @@
                     password: ''
                 }
             }
+        },
+        props: {
+            modal: Boolean
         },
         methods: {
             register(event){

@@ -1,0 +1,90 @@
+/* Banner preview */
+.default-text {
+    line-height: 1;
+}
+
+.cta-button {
+    border-radius: 5px;
+
+    span {
+        position: absolute;
+        width: 100%;
+        display: block;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.preview-block-container {
+    width: fit-content;
+    margin: auto;
+}
+
+/* Template preview */
+.template {
+    &-block {
+        width: calc(100% - 200px);
+
+        &-giga {
+            max-width: 970px;
+        }
+        &-tower {
+            max-width: 300px;
+        }
+    }
+
+    &-sidebar {
+        width: 190px;
+        padding-left: 10px;
+    }
+}
+
+/* Template creation */
+.preview {
+    &-block {
+        background: lightgray;
+        border: 1px solid black;
+
+        span {
+            position: absolute;
+            width: 100%;
+            display: block;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+
+    &-giga {
+        max-width: 970px;
+        max-height: 250px;
+        overflow: hidden; 
+        border: 1px solid;
+    }
+
+    &-tower {
+        max-width: 300px;
+        max-height: 600px;
+        overflow: hidden; 
+        border: 1px solid;
+    }
+}
+.drag {
+    position: absolute;
+    z-index: 10;
+    width: 5px;
+    height: 5px;
+    background: gray;
+
+    &-top {
+        top: -3px;
+    }
+    &-bottom {
+        bottom: -3px;
+    }
+    &-left {
+        left: -3px;
+    }
+    &-right {
+        right: -3px;
+    }
+}

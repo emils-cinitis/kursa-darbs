@@ -46,6 +46,7 @@ Route::namespace('api')->group(function () {
         Route::get('/user/color-schemes', [ ColorSchemeController::class, 'getAll' ]);
         Route::get('/user/color-scheme', [ ColorSchemeController::class, 'get' ]);
         Route::post('/user/color-scheme', [ ColorSchemeController::class, 'store' ]);
+        Route::delete('/user/color-scheme', [ ColorSchemeController::class, 'delete' ]);
 
         Route::get('/user/templates', [ TemplateController::class, 'getAll' ]);
         Route::get('/user/template', [ TemplateController::class, 'get' ]);

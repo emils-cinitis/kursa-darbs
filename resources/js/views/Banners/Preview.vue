@@ -63,9 +63,6 @@
         mounted() {
             window.addEventListener("resize", this.scaleElements);
         },
-        updated() {
-            this.scaleElements();
-        },
         methods: {
             scaleElements() {
                 let container = this.$refs["preview-container"],
@@ -77,7 +74,9 @@
                 }
 
                 //Scale preview
-                this.scale = container.clientWidth / max_banner_width;
+                if(typeof container !== "undefined") {
+                    this.scale = container.clientWidth / max_banner_width;
+                }
                 if(this.scale > 1) {
                     this.scale = 1;
                 }

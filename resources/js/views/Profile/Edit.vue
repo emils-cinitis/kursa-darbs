@@ -1,8 +1,8 @@
 <template>
     <div class="block-with-sidebar">
-        <h1>Edit information</h1>
         <b-col cols="12">
-            <b-form @submit="edit">
+            <b-form id="edit-user-form" @submit="edit" class="form-small mx-auto">
+                <h1 class="w-100 mx-auto">Edit information</h1>
                 <b-form-group
                     label="Name:"
                     label-for="user-name"
@@ -63,7 +63,7 @@
                     ></b-form-input>
                 </b-form-group>
                 <b-row>
-                    <b-col cols="12" class="btn-container">
+                    <b-col cols="12" class="text-center">
                         <b-button type="submit" class="btn-form" variant="success">Edit</b-button>
                     </b-col>
                 </b-row>

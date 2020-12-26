@@ -53,6 +53,19 @@ class ColorSchemeController extends Controller {
                 }
             } else {
                 $color_schemes = $user->colorSchemes;
+                $color_schemes_array = [];
+
+                foreach($color_schemes as $color_scheme){
+                    $banners = $color_scheme->banners()->get(['uuid', 'name']);
+
+                    $color_scheme_array = array_merge(
+                        $color_scheme->toArray(), 
+                        [ 'banners' => $banners ]
+                    );
+                    array_push($color_schemes_array, $color_scheme_array);
+                }
+
+                $color_schemes = $color_schemes_array;
             }
 
             return response()->json([
@@ -73,7 +86,7 @@ class ColorSchemeController extends Controller {
         if(empty($request->input('id'))) {
             return response()->json([
                 'status'    => 'error',
-                'message'   => 'Missing color scheme info'
+                'message'   => 'Missing color scheme ID'
             ], 422);
         }
 
@@ -100,7 +113,7 @@ class ColorSchemeController extends Controller {
 
             return response()->json([
                 'status'    => 'error',
-                'message'   => 'Cannot retreive color scheme'
+                'message'   => 'Cannot retreive color scheme information'
             ], 500);
         }
     }
@@ -112,21 +125,21 @@ class ColorSchemeController extends Controller {
             
             return response()->json([
                 'status'    => 'error',
-                'message'   => 'Cannot retreive user information'
+                'messages'  => ['unexpected' => 'Cannot retreive user information']
             ], 422);
         }
 
         $validator = Validator::make($request->all(), [
-            'title'             => 'required',
-            'background_color'  => 'required',
-            'text_color'        => 'required',
-            'cta_color'         => 'required',
+            'title'             => 'required|min:5|max:255',
+            'background_color'  => 'required|regex:/#[0-9a-fA-F]{8}$/',
+            'text_color'        => 'required|regex:/#[0-9a-fA-F]{8}$/',
+            'cta_color'         => 'required|regex:/#[0-9a-fA-F]{8}$/',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'status'    => 'error', 
-                'message'   => $validator->messages()
+                'messages'  => $validator->messages()
             ], 422);
         }
 
@@ -142,7 +155,8 @@ class ColorSchemeController extends Controller {
 
                 return response()->json([
                     'status'    => 'success',
-                    'message'   => 'Created color scheme successfully'
+                    'message'   => 'Created color scheme successfully',
+                    'color_scheme' => $color_scheme
                 ], 200);
             } else {
                 //Update
@@ -163,15 +177,45 @@ class ColorSchemeController extends Controller {
                 $color_scheme->save();
                 return response()->json([
                     'status'    => 'success',
-                    'message'   => 'Updated color scheme successfully'
+                    'message'   => 'Updated color scheme successfully',
+                    'color_scheme' => $color_scheme
                 ], 200);
             }
         } catch(\Exception $e) {
 
             return response()->json([
                 'status'    => 'error',
-                'message'   => 'Cannot save color scheme'
-            ], 422);
+                'messages'  => ['unexpected' => 'Cannot save color scheme because of an unexpected error']
+            ], 500);
+        }
+    }
+
+    public function delete(Request $request) {
+        try {
+            $color_scheme = ColorScheme::findOrFail($request->input('id'));
+            $banners = $color_scheme->banners;
+
+            if($color_scheme->user_uuid !== Auth::user()->uuid) {
+                return response()->json([
+                    'status'    => 'error',
+                    'message'   => 'Color scheme is not created by user'
+                ], 422);
+            }
+            if(count($banners->toArray()) > 0) {
+                return response()->json([
+                    'status'    => 'error',
+                    'message'   => 'Color scheme is in use and cannot be deleted'
+                ], 422);
+            }
+
+            $color_scheme->delete();
+
+        } catch(\Exception $e) {
+
+            return response()->json([
+                'status'    => 'error',
+                'message'   => 'Cannot delete color scheme because of an unexpected error'
+            ], 500);
         }
     }
 }
