@@ -130,7 +130,7 @@ class ColorSchemeController extends Controller {
         }
 
         $validator = Validator::make($request->all(), [
-            'title'             => 'required|between:5,255',
+            'title'             => 'required|min:5|max:255',
             'background_color'  => 'required|regex:/#[0-9a-fA-F]{8}$/',
             'text_color'        => 'required|regex:/#[0-9a-fA-F]{8}$/',
             'cta_color'         => 'required|regex:/#[0-9a-fA-F]{8}$/',

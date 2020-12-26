@@ -25,9 +25,9 @@ class UserController extends Controller {
         if(Auth::user() == null){
             //Create user
             $validator = Validator::make($request->all(), [
-                'username'  => 'required|unique:users',
-                'email'     => 'required|unique:users|email',
-                'password'  => 'required|confirmed',
+                'username'  => 'required|min:5|max:255|unique:users',
+                'email'     => 'required|max:255|unique:users|email',
+                'password'  => 'required|min:8|max:255|confirmed',
             ]);
             
             if ($validator->fails()) {
@@ -67,12 +67,12 @@ class UserController extends Controller {
 
             $validatableData = [
                 'username'  => 'required',
-                'email'     => 'required|email',
+                'email'     => 'required|max:255|email',
             ];
 
-            if($request->input('username') != $user->username) $validatableData['username'] = 'required|unique:users';
-            if($request->input('email') != $user->email) $validatableData['email'] = 'required|email|unique:users';
-            if(!empty($request->input('password'))) array_push($validatableData, ['password'  => 'required|confirmed']);
+            if($request->input('username') != $user->username) $validatableData['username'] = 'required|min:5|max:255|unique:users';
+            if($request->input('email') != $user->email) $validatableData['email'] = 'required|max:255|email|unique:users';
+            if(!empty($request->input('password'))) array_push($validatableData, ['password'  => 'required|min:8|max:255|confirmed']);
 
             $validator = Validator::make($request->all(), $validatableData);
             if ($validator->fails()) {
