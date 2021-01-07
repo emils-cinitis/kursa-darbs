@@ -42,8 +42,11 @@
                     >
                         {{ banner[block.block_type.title] }}
                     </span>
-                    <!-- Todo TEST -->
-                    <img v-else :src="banner.image" alt="Image">
+                    <img v-else 
+                        :src="banner.image" 
+                        alt="Image"
+                        :style="((block.width > block.height) ? 'width: 100%;' : 'height: 100%;')"
+                    >
                 </div>
             </div>
         </div>
@@ -62,8 +65,23 @@
         },
         mounted() {
             window.addEventListener("resize", this.scaleElements);
+            this.runFirstScale(0);
         },
         methods: {
+            //Scale on first load
+            runFirstScale(iteration) {
+                let container = this.$refs["preview-container"];
+
+                //Make sure container has size, or try next tick
+                if(typeof container !== "undefined" && container.clientWidth > 0 && typeof this.banner.banner_types == "object") {
+                    this.scaleElements();
+                } else if(iteration < 100) {
+                    this.$nextTick(() => {
+                        this.runFirstScale(iteration+1)
+                    });
+                }
+            },
+            //Scale preview from largest banner type
             scaleElements() {
                 let container = this.$refs["preview-container"],
                     max_banner_width = 0;
