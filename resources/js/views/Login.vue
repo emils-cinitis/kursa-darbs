@@ -57,15 +57,23 @@
             modal: Boolean
         },
         methods: {
-            login() {
+            login(e) {
+                e.preventDefault();
+
                 var app = this;
+                var redirectObject = this.$auth.redirect();
+
                 this.$auth.login({
                     data: app.user,
-                    success: function() { },
+                    success: function() {
+                        if(app.modal) {
+                            app.$bvModal.hide('loginModal');
+                        }
+                    },
                     error: function(error) {
                         this.error = error.response.data.message;
                     },
-
+                    redirect: { name: redirectObject ? redirectObject.from.name : '/' },
                     rememberMe: app.remember_me
                 });
             },

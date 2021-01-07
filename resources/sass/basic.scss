@@ -10,6 +10,20 @@
     }
 }
 
+.table {
+    &-container {
+        max-width: 60%;
+        @media (max-width: 1550px) {
+            max-width: 100%;
+        }
+    }
+    &-row {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid gray;
+    }
+}
+
 .error {
     &-text {
         &-single {

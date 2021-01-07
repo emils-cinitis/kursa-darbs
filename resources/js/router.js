@@ -16,6 +16,12 @@ import TemplateIndex from './views/Templates/Index.vue';
 import TemplatesAll from './views/Templates/ShowAll.vue';
 import TemplatesForm from './views/Templates/Form.vue';
 import PublicBanner from './views/Public/Banner.vue';
+import AllPublicBanners from './views/Public/AllBanners.vue';
+import AdminIndex from './views/Administrator/Index.vue';
+import AdminAllUsers from './views/Administrator/ShowUsers.vue';
+import AdminShowUser from './views/Administrator/User.vue';
+import AdminShowBanners from './views/Administrator/ShowBanners.vue';
+import AdminShowBanner from './views/Administrator/Banner.vue';
 
 const routes = [
     {
@@ -25,6 +31,16 @@ const routes = [
         meta: {
             auth: undefined
         }
+    },
+    {
+        path: '/banner/:uuid',
+        name: 'public-banner',
+        component: PublicBanner
+    },
+    {
+        path: '/public-banners/:page?',
+        name: 'public-banners',
+        component: AllPublicBanners
     },
     {
         path: '/register',
@@ -69,11 +85,15 @@ const routes = [
         ]
     },
     {
-        path: '/banners',
+        path: '/user/banners',
         name: 'banners',
         component: BannerIndex,
         meta: {
-            auth: true
+            auth: {
+                roles: [1, 2, 3], 
+                redirect: { name: 'login' }, 
+                forbiddenRedirect: { name: 'blocked-user' }
+            }
         },
         children: [
             {
@@ -81,7 +101,11 @@ const routes = [
                 name: 'all-banners',
                 component: BannerAll,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [1, 2, 3], 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 },
             },
             {
@@ -89,7 +113,11 @@ const routes = [
                 name: 'add-banner',
                 component: BannerForm,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [2, 3], 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 },
             },
             {
@@ -97,7 +125,11 @@ const routes = [
                 name: 'edit-banner',
                 component: BannerForm,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [2, 3], 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 }
             }
         ]
@@ -107,7 +139,11 @@ const routes = [
         name: 'color-schemes',
         component: ColorSchemeIndex,
         meta: {
-            auth: true
+            auth: {
+                roles: [2, 3], 
+                //redirect: { name: 'login' }, 
+                forbiddenRedirect: { name: 'blocked-user' }
+            }
         },
         children: [
             {
@@ -115,7 +151,11 @@ const routes = [
                 name: 'all-color-schemes',
                 component: ColorSchemesAll,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [2, 3], 
+                        //redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 },
             },
             {
@@ -123,7 +163,11 @@ const routes = [
                 name: 'add-color-scheme',
                 component: ColorSchemesForm,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [2, 3], 
+                        //redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 },
             },
             {
@@ -131,7 +175,11 @@ const routes = [
                 name: 'edit-color-scheme',
                 component: ColorSchemesForm,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [2, 3], 
+                        //redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 }
             }
         ]
@@ -141,7 +189,11 @@ const routes = [
         name: 'tempaltes',
         component: TemplateIndex,
         meta: {
-            auth: true
+            auth: {
+                roles: [2, 3], 
+                redirect: { name: 'login' }, 
+                forbiddenRedirect: { name: 'blocked-user' }
+            }
         },
         children: [
             {
@@ -149,7 +201,11 @@ const routes = [
                 name: 'all-templates',
                 component: TemplatesAll,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [2, 3], 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 },
             },
             {
@@ -157,7 +213,11 @@ const routes = [
                 name: 'add-template',
                 component: TemplatesForm,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [2, 3], 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 },
             },
             {
@@ -165,21 +225,94 @@ const routes = [
                 name: 'edit-template',
                 component: TemplatesForm,
                 meta: {
-                    auth: true
+                    auth: {
+                        roles: [2, 3], 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: { name: 'blocked-user' }
+                    }
                 }
             }
         ]
     },
     {
-        path: '/banner/:uuid',
-        name: 'public-banner',
-        component: PublicBanner
+        path: '/admin',
+        name: 'admin-dashboard',
+        component: AdminIndex,
+        meta: {
+            auth: {
+                roles: 3, 
+                redirect: { name: 'login' }, 
+                forbiddenRedirect: '/'
+            }
+        },
+        children: [
+            {
+                path: 'users/:page?',
+                name: 'admin-all-users',
+                component: AdminAllUsers,
+                meta: {
+                    auth: {
+                        roles: 3, 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: '/'
+                    }
+                },
+            },
+            {
+                path: 'banners/:user_uuid?/:page?',
+                name: 'admin-all-banners',
+                component: AdminShowBanners,
+                meta: {
+                    auth: {
+                        roles: 3, 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: '/'
+                    }
+                },
+            },
+            {
+                path: 'user/:uuid',
+                name: 'admin-show-user',
+                component: AdminShowUser,
+                meta: {
+                    auth: {
+                        roles: 3, 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: '/'
+                    }
+                },
+            },
+            {
+                path: 'banner/:uuid',
+                name: 'admin-show-banner',
+                component: AdminShowBanner,
+                meta: {
+                    auth: {
+                        roles: 3, 
+                        redirect: { name: 'login' }, 
+                        forbiddenRedirect: '/'
+                    }
+                },
+            },
+        ]
     },
+    {
+        path: '/blocked-user',
+        name: 'blocked-user',
+        component: Home,
+        meta: {
+            auth: {
+                roles: 1, 
+                redirect: '/', 
+                forbiddenRedirect: '/'
+            }
+        }
+    }
 ];
 
 const router = new VueRouter({
     history: true,
     mode: 'history',
     routes,
-  })
-  export default router
+});
+export default router;
