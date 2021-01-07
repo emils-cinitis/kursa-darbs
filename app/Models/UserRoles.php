@@ -14,8 +14,4 @@ class UserRoles extends Model {
      * @var bool
      */
     public $timestamps = false;
-
-    public function getBasicRole(){
-        return 1;
-    }
 }

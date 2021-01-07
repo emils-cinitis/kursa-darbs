@@ -49,6 +49,10 @@ class User extends Authenticatable implements JWTSubject {
         'email_verified_at' => 'datetime',
     ];
 
+    public function role() {
+        return $this->belongsTo('App\Models\UserRoles', 'user_role');
+    }
+
     public function banners() {
         return $this->hasMany('App\Models\Banner', 'created_by');
     }
@@ -70,9 +74,20 @@ class User extends Authenticatable implements JWTSubject {
     }
 
     public function deleteAllBanners() {
-        $banners = $this->banners;
-        foreach($banners as $banner) {
+        foreach($this->banners as $banner) {
             $banner->deleteAllInfo();
+        }
+    }
+
+    public function deleteAllColorSchemes() {
+        foreach($this->colorSchemes as $color_scheme) {
+            $color_scheme->delete();
+        }
+    }
+
+    public function deleteAllTemplates() {
+        foreach($this->templates as $template) {
+            $template->deleteAllInfo();
         }
     }
 
