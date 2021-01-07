@@ -44,22 +44,35 @@
         },
         mounted() {
             window.addEventListener("resize", this.scaleElements);
-        },
-        updated() {
-            this.scaleElements();
+            this.runFirstScale(0);
         },
         methods: {
+            //Scale on first load
+            runFirstScale(iteration) {
+                let container = this.$refs["preview-container"];
+                //Make sure container has size, or try next tick
+                if(typeof container !== "undefined" && container.clientWidth > 0) {
+                    this.scaleElements();
+                } else if(iteration < 100) {
+                    this.$nextTick(() => {
+                        this.runFirstScale(iteration+1)
+                    });
+                }
+            },
+            //Scale preview from largest banner type
             scaleElements() {
                 let container = this.$refs["preview-container"],
                     max_template_width = 0;
 
                 //Find biggest banner width
-                for( const [key, banner_type]  of Object.entries(this.template.banner_types)) {
+                for( const [key, banner_type]  of Object.entries(this.template)) {
                     max_template_width = (banner_type.sizes.width > max_template_width) ? banner_type.sizes.width : max_template_width;
                 }
 
                 //Scale preview
-                this.scale = container.clientWidth / max_template_width;
+                if(typeof container !== "undefined") {
+                    this.scale = container.clientWidth / max_template_width;
+                }
                 if(this.scale > 1) {
                     this.scale = 1;
                 }
