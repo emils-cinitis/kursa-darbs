@@ -19,6 +19,7 @@ class CreateBanners extends Migration {
             $table->string('sub_text')->nullable();
             $table->string('image')->nullable();
             $table->string('call_to_action')->nullable();
+            $table->string('link_url');
             $table->foreignId('color_scheme_id')->constrained('color_schemes');
             $table->foreignUuid('created_by')->references('uuid')->on('users');
             $table->foreignId('template_id')->constrained('templates');

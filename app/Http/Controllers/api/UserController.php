@@ -37,7 +37,7 @@ class UserController extends Controller {
                 ], 422);
             }
             
-            $user_info['uuid']= Str::uuid()->toString();
+            $user_info['uuid'] = Str::uuid()->toString();
             if(!isset($user_info['user_role'])) $user_info['user_role'] = 2;
             $user_info['password'] = Hash::make($request->password);
 
@@ -47,7 +47,7 @@ class UserController extends Controller {
                 return response()->json(
                     [
                         'status'    => 'success', 
-                        'message'   => 'Registered successfully'
+                        'message'   => 'User registered successfully'
                     ], 200
                 );
 
@@ -66,7 +66,7 @@ class UserController extends Controller {
             $user = User::find(Auth::user()->uuid);
 
             $validatableData = [
-                'username'  => 'required',
+                'username'  => 'required|min:5|max:255',
                 'email'     => 'required|max:255|email',
             ];
 
@@ -95,7 +95,7 @@ class UserController extends Controller {
                 return response()->json(
                     [
                         'status'    => 'success', 
-                        'message'   => 'Edited successfully'
+                        'message'   => 'User edited successfully'
                     ], 200
                 );
 
@@ -116,12 +116,25 @@ class UserController extends Controller {
         try {
             $user = User::find(Auth::user()->uuid);
 
+            if(empty($request->input('password'))) {
+                return response()->json([
+                    'status'    => 'error', 
+                    'message'   => 'The password field is required.'
+                ], 422);
+            }
+            if(!Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'status'    => 'error', 
+                    'message'   => 'Password is incorrect'
+                ], 422);
+            }
+
             $user->deleteAllBanners();
             $user->delete();
 
             return response()->json([
                 'status'    => 'success', 
-                'message'   => 'User deleted'
+                'message'   => 'User successfully deleted'
             ], 200);
 
         } catch(\Exception $e) {
@@ -140,11 +153,25 @@ class UserController extends Controller {
      * @return JsonResponse
      */
     public function login(Request $request) {
+        $validator = Validator::make(
+            $request->only('email', 'password'), 
+            [
+                'email' => 'required',
+                'password' => 'required'
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 'error', 
+                'messages'  => $validator->messages()
+            ], 422);
+        }
+
         $credentials = $request->only('email', 'password');
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Email and / or password is wrong'
+                'message' => 'Email and / or password is incorrect'
             ], 422);
         }
         return response()->json(['status' => 'successs'], 200)
@@ -185,14 +212,14 @@ class UserController extends Controller {
             return response()->json([
                 'status'    => 'success',
                 'data'      => $user
-            ]);
+            ], 200);
 
         } catch(\Exception $e) {
 
             return response()->json([
                 'status'    => 'error',
                 'message'   => 'Cannot retreive user information'
-            ]);
+            ], 422);
         }
     }
 

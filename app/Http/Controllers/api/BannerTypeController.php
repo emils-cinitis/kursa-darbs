@@ -9,9 +9,11 @@ use App\Models\BannerType;
 class BannerTypeController extends Controller {
     public function get(Request $request) {
         try {
+            //Get all banner types from database
             $banner_types = BannerType::all();
 
             $banner_types_reformatted = [];
+            //Change array to be sorted by title not ID
             foreach($banner_types as $key => $banner_type) {
                 $banner_type_title = strtolower($banner_type['title']);
                 unset($banner_type['title']);
