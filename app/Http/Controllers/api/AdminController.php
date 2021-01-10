@@ -11,6 +11,14 @@ use App\Models\Banner;
 use App\Models\UserRoles;
 
 class AdminController extends Controller {
+
+    /**
+     * Get needed information from user which isn't trivial
+     * 
+     * @param User $user User model
+     * 
+     * @return array Contains all info about user
+     */
     private function getAllUserInfo(User $user) {
         //Get user role object
         $user->role;
@@ -34,6 +42,13 @@ class AdminController extends Controller {
         return $user_array;
     }
 
+    /**
+     * Get all user list
+     * 
+     * @param Request $request Request containing filters
+     * 
+     * @return Response JSON response with success or error
+     */
     public function getUsers(Request $request) {
         try {
             $users_query = User::query();
@@ -105,6 +120,13 @@ class AdminController extends Controller {
         }
     }
 
+    /**
+     * Get specific user information
+     * 
+     * @param Request $request Request containing user UUID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function getUser(Request $request) {
         if(!empty($request->input('uuid'))) {
             try {
@@ -130,7 +152,12 @@ class AdminController extends Controller {
         }
     }
 
-    public function getUserRoles(Request $request) {
+    /**
+     * Get all user roles for Vuejs Bootstrap select field
+     * 
+     * @return Response JSON response with success or error
+     */
+    public function getUserRoles() {
         try {
             $user_roles = UserRoles::all();
             $user_roles_formatted = [];
@@ -158,6 +185,13 @@ class AdminController extends Controller {
         }
     }
 
+    /**
+     * Change specific user role
+     * 
+     * @param Request $request Request containing user's UUID and new role
+     * 
+     * @return Response JSON response with success or error
+     */
     public function changeUserRole(Request $request) {
         if(!empty($request->input('uuid')) && !empty($request->input('role'))) {
             try {
@@ -186,6 +220,13 @@ class AdminController extends Controller {
         }
     }
 
+    /**
+     * Delete user from database
+     * 
+     * @param Request $request Request containing user UUID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function deleteUser(Request $request) {
         if(!empty($request->input('uuid'))) {
             try {
@@ -216,6 +257,13 @@ class AdminController extends Controller {
         }
     }
 
+    /**
+     * Get all banners from database
+     * 
+     * @param Request $request Request containing filters
+     * 
+     * @return Response JSON response with success or error
+     */
     public function getBanners(Request $request) {
         try {
             $banner_query = Banner::query();
@@ -276,6 +324,13 @@ class AdminController extends Controller {
         }
     }
 
+    /**
+     * Delete banner from database
+     * 
+     * @param Request $request Request containing banner UUID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function deleteBanner(Request $request) {
         if(!empty($request->input('uuid'))) {
             try {

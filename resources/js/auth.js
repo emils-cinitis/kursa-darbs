@@ -13,7 +13,7 @@ const config = {
   registerData: {
     url: 'user/store', 
     method: 'POST', 
-    redirect: '/login'
+    redirect: ''
   },
   loginData: {
     url: 'user/login', 

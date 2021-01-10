@@ -7,14 +7,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+
 use App\Models\Banner;
 use App\Models\User;
 use App\Models\ColorScheme;
 use App\Models\Template;
+
 use ZipArchive;
 use Carbon\Carbon;
 
 class BannerController extends Controller {
+    /**
+     * Save image to server
+     * 
+     * @param string $banner_uuid Image banners UUID
+     * @param string $image_b64 Image in base64 format
+     * 
+     * @return string|array Path to file or error message
+     */
     private function saveImage($banner_uuid, $image_b64) {
         try {
             if(strpos($image_b64, ",") === false) {
@@ -24,8 +34,8 @@ class BannerController extends Controller {
 
             $file = base64_decode($image_b64);
 
-            $path_for_banner = public_path() . '\banners\\' . $banner_uuid;
-            $path = $path_for_banner . "\image.jpeg";
+            $path_for_banner = public_path() . '/banners/' . $banner_uuid;
+            $path = $path_for_banner . "/image.jpeg";
 
             if(!file_exists($path_for_banner)) {
                 mkdir($path_for_banner);
@@ -33,12 +43,17 @@ class BannerController extends Controller {
 
             file_put_contents($path, $file);
 
-            return '\banners\\' . $banner_uuid . "\image.jpeg";
+            return '/banners/' . $banner_uuid . "/image.jpeg";
         } catch(\Exception $e) {
             return ['error' => ['Image is in wrong format']];
         }
     }
 
+    /**
+     * Get all banners from user
+     * 
+     * @return Response JSON object with banners or error
+     */
     public function getAll() {
         //Declare return variable as array
         $return_array = [];
@@ -105,6 +120,12 @@ class BannerController extends Controller {
         ], 200);
     }
 
+    /**
+     * Get user banner information
+     * 
+     * @param Request $request Request containing banner UUID
+     * @return Response JSON object with banner information or error
+     */
     public function get(Request $request) {
         $uuid = $request->input('uuid');
         
@@ -140,6 +161,12 @@ class BannerController extends Controller {
         }
     }
 
+    /**
+     * Get public banner information
+     * 
+     * @param Request $request Request containing banner UUID
+     * @return Response JSON object with banner information or error
+     */
     public function getPublicBanner(Request $request) {
         $uuid = $request->input('uuid');
 
@@ -213,6 +240,12 @@ class BannerController extends Controller {
         }
     }
 
+    /**
+     * Get public banners
+     * 
+     * @param Request $request Request containing page number and filters
+     * @return Response JSON object with banners or error
+     */
     public function getAllPublicBanners(Request $request) {
         try {
             $banner_query = Banner::query();
@@ -284,9 +317,12 @@ class BannerController extends Controller {
                 array_push($banners_array, $banner_array);
             }
 
+            $has_next_page = (Banner::all()->count() / $max_items_per_page) > $page;
+
             return response()->json([
                 'status'  => 'success', 
-                'banners' => $banners_array
+                'banners' => $banners_array,
+                'has_next_page' => $has_next_page
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -296,6 +332,13 @@ class BannerController extends Controller {
         }
     }
 
+    /**
+     * Store banner information to database
+     * 
+     * @param Request $request Request containing all info about saveable banner
+     * 
+     * @return Response JSON response with success or error
+     */
     public function store(Request $request) {
         //Get user UUID
         try {
@@ -486,6 +529,13 @@ class BannerController extends Controller {
         }
     }
 
+    /**
+     * Delete banner from database
+     * 
+     * @param Request $request Request containing banner UUID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function delete(Request $request) {
         //Check if there is a user
         if(empty(Auth::user()) || empty(Auth::user()->uuid)) {
@@ -536,6 +586,11 @@ class BannerController extends Controller {
         }
     }
 
+    /**
+     * Delete directory and all of its children
+     * 
+     * @param string $dir Directory path
+     */
     private function removeDirectoryRecursively($dir) {
         if (is_dir($dir)) {
             $objects = scandir($dir);
@@ -553,6 +608,13 @@ class BannerController extends Controller {
         }
     }
 
+    /**
+     * Export banner to ZIP
+     * 
+     * @param Request $request Request containing banner UUID
+     * 
+     * @return Response JSON response with error or ZIP download
+     */
     public function export(Request $request) {
         //Test if UUID passed
         $uuid = $request->input('uuid');

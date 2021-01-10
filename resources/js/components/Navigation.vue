@@ -47,7 +47,7 @@
                             <span>{{user.username}}</span>
                         </template>
                         <li>
-                            <router-link class="dropdown-item" :to="{ name: 'profile' }">Profile</router-link>
+                            <router-link class="dropdown-item" :to="{ name: 'edit-user' }">Profile</router-link>
                         </li>
                         <li>
                             <b-button class="dropdown-item" @click='logout'>Logout</b-button>

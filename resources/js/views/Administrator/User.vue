@@ -137,7 +137,7 @@
             changeRoleForUser() {
                 axios.post("/admin/user", { uuid: this.user.uuid, role: this.new_role } )
                     .then((response) => {
-                        this.user = this.getUser(this.user.uuid);
+                        this.getUser(this.user.uuid);
 
                         this.$bvModal.hide('specialModal');
                         this.$bvToast.toast(response.data.message, {

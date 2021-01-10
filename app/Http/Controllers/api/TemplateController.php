@@ -14,6 +14,13 @@ use App\Models\BlockPosition;
 
 class TemplateController extends Controller {
 
+    /**
+     * Check if given banner belongs to currently authenticated user
+     * 
+     * @param number $template_id Checkable templates' id
+     * 
+     * @return array|Template JSON response error or templates' modal
+     */
     private function checkIfTemplateBelongsToUser($template_id) {
         //Check if template id exists
         if(empty($template_id)) {
@@ -43,6 +50,11 @@ class TemplateController extends Controller {
         return $template;
     }
 
+    /**
+     * Get all default templates
+     * 
+     * @return null|Template All default templates modal
+     */
     private function getDefaultTemplates() {
         try {
             //Default template do not have a user who created them
@@ -53,6 +65,13 @@ class TemplateController extends Controller {
         }
     }
 
+    /**
+     * Get all info about existing template
+     * 
+     * @param Template $template Template model
+     * 
+     * @return array All info from template
+     */
     private function getAllInfoFromTemplate(Template $template) {
         //Declare response variable as array
         $response_array = array();
@@ -91,6 +110,14 @@ class TemplateController extends Controller {
         return $response_array;
     }
 
+    /**
+     * Rollback created elements if database insert fails
+     * 
+     * @param array $elemets Array containing all elements that need to be rolled back
+     * @param boolean $edit Should elements be edited or deleted
+     * 
+     * @return boolean Success of rollback
+     */
     private function rollback($elements, $edit = false) {
         //Reverse array, so last added elements are deleted first
         $elements = array_reverse($elements);
@@ -131,6 +158,13 @@ class TemplateController extends Controller {
         return $success;
     }
 
+    /**
+     * Get selected templates' blocks
+     * 
+     * @param Request $request Request containing template ID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function getTemplateBlocks(Request $request) {
         //Get template and check if it belongs to user
         $template = $this->checkIfTemplateBelongsToUser($request->input('id'));
@@ -169,6 +203,13 @@ class TemplateController extends Controller {
         ], 200);
     }
 
+    /**
+     * Get all user templates
+     * 
+     * @param Request $request Request containing information if used in VueJs Bootstrap select field
+     * 
+     * @return Response JSON response with success or error
+     */
     public function getAll(Request $request) {
         //Find user model
         try {
@@ -245,6 +286,13 @@ class TemplateController extends Controller {
         }
     }
 
+    /**
+     * Get all needed information about template
+     * 
+     * @param Request $request Request containing template ID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function get(Request $request) {
         //Get template and check if it is created by this user
         $template = $this->checkIfTemplateBelongsToUser($request->input('id'));
@@ -267,6 +315,13 @@ class TemplateController extends Controller {
         ], 200);
     }
 
+    /**
+     * Store template to database
+     * 
+     * @param Request $request Request containing template information
+     * 
+     * @return Response JSON response with success or error
+     */
     public function store(Request $request) {
         //Find user UUID
         try {
@@ -293,14 +348,14 @@ class TemplateController extends Controller {
 
         //Check if there are any enabled banner types
         $banner_types = $request->input('banner_types');
-        $enabled_banner_types = 0;
+        $enabled_banner_types = false;
         foreach($banner_types as $banner_type){
             if($banner_type['enabled'] === true) {
-                $enabled_banner_types++;
+                $enabled_banner_types = true;
                 break;
             }
         }
-        if($enabled_banner_types == 0) {
+        if(!$enabled_banner_types) {
             return response()->json([
                 'status'    => 'error', 
                 'messages'  => ['banner_types' => ['No banner types specified']]
@@ -421,7 +476,7 @@ class TemplateController extends Controller {
                 'id'        => $template->id
             ], 200);
         } else {
-        //Update template
+            //Update template
 
             $updated_entities = [];
             $deletable_entities = [];
@@ -476,17 +531,6 @@ class TemplateController extends Controller {
 
                 //If enabled - update info
                 if($banner_type['enabled'] === true) {
-                    //If no blocks, remove updated info
-                    if(count($banner_type['blocks']) == 0) {
-                        $success = $this->rollback($updated_entities, true);
-        
-                        return response()->json([
-                            'status'    => 'error',
-                            'message'   => 'Blocks missing for banner type(s)',
-                            'reverted'  => $success
-                        ], 422);
-                    }
-
                     //Cycle all blocks
                     foreach($banner_type['blocks'] as $key => $block) {
                         //Find block type by ID
@@ -649,6 +693,13 @@ class TemplateController extends Controller {
         }
     }
 
+    /**
+     * Delete template from database
+     * 
+     * @param Request $request Request containing tempalte ID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function delete(Request $request) {
         try {
             //Find template and it's banners and blocks

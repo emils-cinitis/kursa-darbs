@@ -32,10 +32,21 @@
                     </b-col>
                 </b-row>
 
+                <b-row class="py-2">
+                        <b-col offset="5" cols="1" v-if="prev_page != 0">
+                            <router-link :to="{ name: 'public-banners', params: { page: prev_page } }">Prev page</router-link>
+                        </b-col>
+                        <b-col offset="5" cols="1" v-else>
+                        </b-col>
+                        <b-col cols="1" v-if="has_next_page">
+                            <router-link :to="{ name: 'public-banners', params: { page: next_page } }">Next page</router-link>
+                        </b-col>
+                    </b-row>
+
                 <!-- Show all banners -->
                 <div class="table-container mx-auto" v-if="banners.length > 0">
                     <b-row>
-                        <b-col cols="4" v-for="(banner, key) in banners" :key="key">
+                        <b-col cols="4" v-for="(banner, key) in banners" :key="key" class="mb-4">
                             <preview :banner="banner" />
                             <b-row>
                                 <b-col cols="12">
@@ -53,7 +64,7 @@
                         </b-col>
                         <b-col offset="5" cols="1" v-else>
                         </b-col>
-                        <b-col cols="1">
+                        <b-col cols="1" v-if="has_next_page">
                             <router-link :to="{ name: 'public-banners', params: { page: next_page } }">Next page</router-link>
                         </b-col>
                     </b-row>
@@ -84,6 +95,7 @@
         data() {
             return {
                 banners: [],
+                has_next_page: false,
                 exception: '',
                 loading: true,
                 banner_filter: {
@@ -165,9 +177,8 @@
             //Get all user banners from database
             async getAllBanners(){
                 let page = (typeof this.$route.params.page != "undefined") ? this.$route.params.page : 1;
-                await axios.get("/banners", 
-                    { params: 
-                        { 
+                await axios.get("/banners", { 
+                        params: { 
                             page: page, 
                             created_at: this.banner_filter.created, 
                             order: this.banner_filter.order 
@@ -175,6 +186,7 @@
                     }
                     ).then((response) => {
                         this.banners = response.data.banners;
+                        this.has_next_page = response.data.has_next_page;
                         this.loading = false;
                     })
                     .catch((error) => {

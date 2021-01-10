@@ -7,7 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\BannerType;
 
 class BannerTypeController extends Controller {
-    public function get(Request $request) {
+
+    /**
+     * Get all banner types from database
+     * 
+     * @return Response JSON response with success or error
+     */
+    public function get() {
         try {
             //Get all banner types from database
             $banner_types = BannerType::all();

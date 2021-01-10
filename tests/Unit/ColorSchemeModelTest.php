@@ -59,6 +59,17 @@ class ColorSchemeModelTest extends TestCase {
         return $banner;
     }
 
+    private function createArrayForApi($title_length = 40, $id = null, $color = "#FFFFFFFF") {
+        $info = [
+            'title' => Str::random($title_length),
+            'background_color' => $color,
+            'text_color' => $color, 
+            'cta_color' => $color
+        ];
+        if($id != null) $info['id'] = $id;
+        return $info;
+    }
+
 
     //Create color scheme
     public function test_create_color_scheme_success() {
@@ -66,22 +77,13 @@ class ColorSchemeModelTest extends TestCase {
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->postJson('/api/user/color-scheme', [
-                'title' => Str::random(40),
-                'background_color' => '#FFFFFFFF',
-                'text_color' => '#FFFFFFFF', 
-                'cta_color' => '#FFFFFFFF'
-            ]);
+            ->postJson('/api/user/color-scheme', $this->createArrayForApi());
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'message',
-                'color_scheme' => ['id', 'title', 'background_color', 'text_color', 'cta_color']
-            ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure(['message', 'color_scheme' => ['id', 'title', 'background_color', 'text_color', 'cta_color'] ]);
     }
 
     public function test_create_color_scheme_success_min() {
@@ -89,22 +91,13 @@ class ColorSchemeModelTest extends TestCase {
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->postJson('/api/user/color-scheme', [
-                'title' => Str::random(5),
-                'background_color' => '#FFFFFFFF',
-                'text_color' => '#FFFFFFFF', 
-                'cta_color' => '#FFFFFFFF'
-            ]);
+            ->postJson('/api/user/color-scheme', $this->createArrayForApi(5) );
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'message',
-                'color_scheme' => ['id', 'title', 'background_color', 'text_color', 'cta_color']
-            ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure(['message', 'color_scheme' => ['id', 'title', 'background_color', 'text_color', 'cta_color'] ]);
     }
 
     public function test_create_color_scheme_success_max() {
@@ -112,22 +105,13 @@ class ColorSchemeModelTest extends TestCase {
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->postJson('/api/user/color-scheme', [
-                'title' => Str::random(255),
-                'background_color' => '#FFFFFFFF',
-                'text_color' => '#FFFFFFFF', 
-                'cta_color' => '#FFFFFFFF'
-            ]);
+            ->postJson('/api/user/color-scheme', $this->createArrayForApi(255));
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'message',
-                'color_scheme' => ['id', 'title', 'background_color', 'text_color', 'cta_color']
-            ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure([ 'message', 'color_scheme' => ['id', 'title', 'background_color', 'text_color', 'cta_color'] ]);
     }
 
     public function test_create_color_scheme_error_min() {
@@ -135,23 +119,13 @@ class ColorSchemeModelTest extends TestCase {
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->postJson('/api/user/color-scheme', [
-                'title' => Str::random(4),
-                'background_color' => '#FFFFFFFF',
-                'text_color' => '#FFFFFFFF', 
-                'cta_color' => '#FFFFFFFF'
-            ]);
+            ->postJson('/api/user/color-scheme', $this->createArrayForApi(4));
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'messages' => [
-                    'title' => ['The title must be at least 5 characters.']
-                ]
-                ], true);
+        $response->assertStatus(422)
+            ->assertJson([ 'messages' => [ 'title' => ['The title must be at least 5 characters.'] ]], true);
     }
 
     public function test_create_color_scheme_error_max() {
@@ -159,23 +133,13 @@ class ColorSchemeModelTest extends TestCase {
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->postJson('/api/user/color-scheme', [
-                'title' => Str::random(256),
-                'background_color' => '#FFFFFFFF',
-                'text_color' => '#FFFFFFFF', 
-                'cta_color' => '#FFFFFFFF'
-            ]);
+            ->postJson('/api/user/color-scheme', $this->createArrayForApi(256));
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'messages' => [
-                    'title' => ['The title may not be greater than 255 characters.']
-                ]
-            ], true);
+        $response->assertStatus(422)
+            ->assertJson([ 'messages' => [ 'title' => ['The title may not be greater than 255 characters.'] ]], true);
     }
 
     //Edit color scheme
@@ -185,23 +149,13 @@ class ColorSchemeModelTest extends TestCase {
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->postJson('/api/user/color-scheme', [
-                'id' => $color_scheme->id,
-                'title' => Str::random(50),
-                'background_color' => '#FFFF0000',
-                'text_color' => '#FFFF0000', 
-                'cta_color' => '#FFFF0000'
-            ]);
+            ->postJson('/api/user/color-scheme', $this->createArrayForApi(50, $color_scheme->id));
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'message',
-                'color_scheme' => ['id', 'title', 'background_color', 'text_color', 'cta_color']
-            ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure([ 'message', 'color_scheme' => ['id', 'title', 'background_color', 'text_color', 'cta_color'] ]);
     }
 
     public function test_edit_color_scheme_error_not_users() {
@@ -211,23 +165,13 @@ class ColorSchemeModelTest extends TestCase {
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->postJson('/api/user/color-scheme', [
-                'id' => $color_scheme->id,
-                'title' => Str::random(50),
-                'background_color' => '#FFFF0000',
-                'text_color' => '#FFFF0000', 
-                'cta_color' => '#FFFF0000'
-            ]);
+            ->postJson('/api/user/color-scheme', $this->createArrayForApi(50, $color_scheme->id));
 
         $user_color_scheme_creator->deleteAllColorSchemes();
         $user_color_scheme_creator->delete();
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'message' => 'Color scheme is not created by user'
-            ], true);
+        $response->assertStatus(422)->assertJson([ 'message' => 'Color scheme is not created by user' ], true);
     }
 
     public function test_edit_color_scheme_error_wrong_id() {
@@ -235,21 +179,11 @@ class ColorSchemeModelTest extends TestCase {
 
         $token = JWTAuth::fromUser($user);
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->postJson('/api/user/color-scheme', [
-                'id' => 10000001,
-                'title' => Str::random(50),
-                'background_color' => '#FFFF0000',
-                'text_color' => '#FFFF0000', 
-                'cta_color' => '#FFFF0000'
-            ]);
+            ->postJson('/api/user/color-scheme', $this->createArrayForApi(50, 11111111, '#FFFF0000'));
 
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'message' => 'No color scheme found with this ID'
-            ], true);
+        $response->assertStatus(422)->assertJson([ 'message' => 'No color scheme found with this ID' ], true);
     }
 
     //Delete color scheme
@@ -258,14 +192,11 @@ class ColorSchemeModelTest extends TestCase {
         $color_scheme = $this->createColorScheme($user->uuid);
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->deleteJson('/api/user/color-scheme', [ 'id' => $color_scheme->id ]);
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->deleteJson('/api/user/color-scheme', [ 'id' => $color_scheme->id ]);
 
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJson(['message' => 'Color scheme successfully deleted'], true);
+        $response->assertStatus(200)->assertJson([ 'message' => 'Color scheme successfully deleted' ], true);
     }
 
     public function test_delete_color_scheme_error_not_users() {
@@ -274,18 +205,13 @@ class ColorSchemeModelTest extends TestCase {
         $color_scheme = $this->createColorScheme($user_color_scheme_creator->uuid);
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->deleteJson('/api/user/color-scheme', [ 'id' => $color_scheme->id ]);
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->deleteJson('/api/user/color-scheme', [ 'id' => $color_scheme->id ]);
 
         $user_color_scheme_creator->deleteAllColorSchemes();
         $user_color_scheme_creator->delete();
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'message' => 'Color scheme is not created by user'
-            ], true);
+        $response->assertStatus(422)->assertJson([ 'message' => 'Color scheme is not created by user' ], true);
     }
 
     public function test_delete_color_scheme_error_has_banner() {
@@ -294,34 +220,24 @@ class ColorSchemeModelTest extends TestCase {
         $banner = $this->createBanner($user->uuid, $color_scheme->id);
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->deleteJson('/api/user/color-scheme', [ 'id' => $color_scheme->id ]);
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->deleteJson('/api/user/color-scheme', [ 'id' => $color_scheme->id ]);
 
         $user->deleteAllBanners();
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'message' => 'Color scheme is in use and cannot be deleted'
-            ], true);
+        $response->assertStatus(422)->assertJson([ 'message' => 'Color scheme is in use and cannot be deleted' ], true);
     }
 
     public function test_delete_color_scheme_error_empty_id() {
         $user = $this->createUser();
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->deleteJson('/api/user/color-scheme', [ 'id' => 100000001 ]);
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->deleteJson('/api/user/color-scheme', [ 'id' => 100000001 ]);
 
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'message' => 'No color scheme found with this ID'
-            ], true);
+        $response->assertStatus(422)->assertJson([ 'message' => 'No color scheme found with this ID' ], true);
     }
 
     //Get user color schemes
@@ -331,35 +247,27 @@ class ColorSchemeModelTest extends TestCase {
         $color_scheme_2 = $this->createColorScheme($user->uuid);
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->getJson('/api/user/color-schemes');
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->getJson('/api/user/color-schemes');
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(200)
+        $response->assertStatus(200)
             ->assertJsonStructure([
                 'color_schemes' => [
                     ['id', 'title', 'banners', 'background_color', 'text_color', 'cta_color']
-                ]
-            ]);
+            ] ]);
     }
 
     public function test_get_color_schemes_success_empty() {
         $user = $this->createUser();
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->getJson('/api/user/color-schemes');
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->getJson('/api/user/color-schemes');
 
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJson([
-                'color_schemes' => []
-            ], true);
+        $response->assertStatus(200)->assertJson([ 'color_schemes' => [] ], true);
     }
 
     //Get usable color schemes
@@ -369,37 +277,25 @@ class ColorSchemeModelTest extends TestCase {
         $color_scheme_2 = $this->createColorScheme($user->uuid);
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->getJson('/api/user/color-schemes?input=true');
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->getJson('/api/user/color-schemes?input=true');
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'color_schemes' => [
-                    ['value', 'text']
-                ]
-            ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure([ 'color_schemes' => [ ['value', 'text'] ] ]);
     }
 
     public function test_get_usable_color_schemes_success_empty() {
         $user = $this->createUser();
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->getJson('/api/user/color-schemes?input=true');
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->getJson('/api/user/color-schemes?input=true');
 
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'color_schemes' => [
-                    ['value', 'text']
-                ]
-            ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure([ 'color_schemes' => [ ['value', 'text'] ] ]);
     }
 
     //Get full info
@@ -414,11 +310,8 @@ class ColorSchemeModelTest extends TestCase {
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'color_scheme' => ['id', 'title', 'banners', 'background_color', 'text_color', 'cta_color']
-            ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure([ 'color_scheme' => ['id', 'title', 'banners', 'background_color', 'text_color', 'cta_color'] ]);
     }
 
     public function test_get_color_scheme_info_error_no_id() {
@@ -426,17 +319,12 @@ class ColorSchemeModelTest extends TestCase {
         $color_scheme = $this->createColorScheme($user->uuid);
 
         $token = JWTAuth::fromUser($user);
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
-            ->getJson('/api/user/color-scheme' );
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->getJson('/api/user/color-scheme' );
 
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'message' => 'Missing color scheme ID'
-            ], true);
+        $response->assertStatus(422)->assertJson([ 'message' => 'Missing color scheme ID' ], true);
     }
 
     public function test_get_color_scheme_info_error_wrong_id() {
@@ -450,11 +338,7 @@ class ColorSchemeModelTest extends TestCase {
         $user->deleteAllColorSchemes();
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'message' => 'No color scheme found with this ID'
-            ], true);
+        $response->assertStatus(422)->assertJson([ 'message' => 'No color scheme found with this ID' ], true);
     }
 
     public function test_get_color_scheme_info_error_not_users() {
@@ -470,10 +354,6 @@ class ColorSchemeModelTest extends TestCase {
         $user_color_scheme_creator->delete();
         $user->delete();
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                'message' => 'Color scheme is not created by user'
-            ], true);
+        $response->assertStatus(422)->assertJson([ 'message' => 'Color scheme is not created by user' ], true);
     }
 }

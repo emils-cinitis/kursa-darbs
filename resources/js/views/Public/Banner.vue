@@ -1,7 +1,7 @@
 <template>
     <div class='pt-2'>
         <b-row v-if="exception == ''">
-            <b-col cols='5'>
+            <b-col cols='8'>
                 <div class='p-2 border'>
                     <preview 
                         v-if="typeof banner.banner_types == 'object'"
@@ -9,7 +9,7 @@
                     />
                 </div>
             </b-col>
-            <b-col cols='7'>
+            <b-col cols='4'>
                 <b-row>
                     <b-col cols='12'>
                         Created By : {{ banner.created_by_name }}

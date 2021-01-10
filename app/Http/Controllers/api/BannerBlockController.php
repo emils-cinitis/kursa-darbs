@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Template;
 
 class BannerBlockController extends Controller {
+
+    /**
+     * Get all banner bloks
+     * 
+     * @param Request $request Request which can contain banner UUID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function get(Request $request) {
         //Get passed ID
         $id = $request->input('id');

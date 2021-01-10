@@ -73,6 +73,16 @@ class User extends Authenticatable implements JWTSubject {
         return $this->hasMany('App\Models\Template', 'user_uuid');
     }
 
+    public function passwordResets() {
+        return $this->hasMany('App\Models\PasswordReset', 'user_uuid');
+    }
+
+    public function deleteAllPasswordResets() {
+        foreach($this->passwordResets as $password_reset) {
+            $password_reset->delete();
+        }
+    }
+
     public function deleteAllBanners() {
         foreach($this->banners as $banner) {
             $banner->deleteAllInfo();

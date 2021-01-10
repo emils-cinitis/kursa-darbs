@@ -26,6 +26,8 @@ Route::namespace('api')->group(function () {
     Route::post('/user/store', [ UserController::class, 'store' ]);
     Route::post('/user/login', [ UserController::class, 'login' ]);
     Route::get('/user/login', [ UserController::class, 'login' ]);
+    Route::get('/user/reset', [ UserController::class, 'resetPasswordEmail' ]);
+    Route::post('/user/reset', [ UserController::class, 'resetPassword' ]);
 
     Route::get('/user/refresh', [ UserController::class, 'refresh' ]);
 

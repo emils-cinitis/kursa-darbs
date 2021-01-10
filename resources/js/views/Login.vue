@@ -36,6 +36,17 @@
                         <b-button type="submit" variant="theme-blue-dark" class="text-white">Login</b-button>
                     </b-col>
                 </b-row>
+
+                <b-row>
+                    <b-col cols="12">
+                        <span>Don't have an account? Create one <a @click="showRegisterModal" href="#">here</a>!</span>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col cols="12">
+                        <span>Forgot password? Reset it <a @click="showPasswordReset" href="#">here</a>!</span>
+                    </b-col>
+                </b-row>
             </b-form>
         </b-col>
     </b-row>
@@ -73,10 +84,22 @@
                     error: function(error) {
                         this.error = error.response.data.message;
                     },
-                    redirect: { name: redirectObject ? redirectObject.from.name : '/' },
+                    redirect: { name: redirectObject ? redirectObject.from.name : 'home' },
                     rememberMe: app.remember_me
                 });
             },
+            showRegisterModal() {
+                if(this.modal) {
+                    this.$bvModal.hide('loginModal');
+                    this.$bvModal.show('registerModal');
+                } else {
+                    this.$router.push({name: 'register'});
+                }
+            },
+            showPasswordReset() { 
+                this.$bvModal.hide('loginModal');
+                this.$bvModal.show('resetPasswordModal');
+            }
         }
     }
 </script>

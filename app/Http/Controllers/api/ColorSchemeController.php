@@ -12,6 +12,11 @@ use App\Models\ColorScheme;
 
 class ColorSchemeController extends Controller {
 
+    /**
+     * Get default color schemes from database
+     * 
+     * @return array|null Array containing all default color schemes
+     */
     private function getDefaultColorSchemes() {
         try {
             //Default color schemes have no user who created them
@@ -22,6 +27,13 @@ class ColorSchemeController extends Controller {
         }
     }
 
+    /**
+     * Get all user color schemes from database
+     * 
+     * @param Request $request Request containing response formatting
+     * 
+     * @return Response JSON response with success or error
+     */
     public function getAll(Request $request) {
         try {
             //Find user model
@@ -94,6 +106,13 @@ class ColorSchemeController extends Controller {
         }
     }
 
+    /**
+     * Get all information about a color scheme
+     * 
+     * @param Request $request Request containing color scheme ID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function get(Request $request) {
         //Check if there is an ID given
         if(empty($request->input('id'))) {
@@ -144,6 +163,13 @@ class ColorSchemeController extends Controller {
         }
     }
 
+    /**
+     * Store color scheme to database
+     * 
+     * @param Request $request Request containing color scheme information
+     * 
+     * @return Response JSON response with success or error
+     */
     public function store(Request $request) {
         //Check if user is authenticated
         try {
@@ -243,6 +269,13 @@ class ColorSchemeController extends Controller {
         }
     }
 
+    /**
+     * Delete color scheme from database
+     * 
+     * @param Request $request Request containing color scheme ID
+     * 
+     * @return Response JSON response with success or error
+     */
     public function delete(Request $request) {
         try {
             //Find color scheme by ID and banners that use this color scheme

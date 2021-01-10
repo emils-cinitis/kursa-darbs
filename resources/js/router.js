@@ -22,6 +22,8 @@ import AdminAllUsers from './views/Administrator/ShowUsers.vue';
 import AdminShowUser from './views/Administrator/User.vue';
 import AdminShowBanners from './views/Administrator/ShowBanners.vue';
 import AdminShowBanner from './views/Administrator/Banner.vue';
+import BlockedUser from './views/BlockedUser.vue';
+import ResetPasswordConfirmation from './views/ResetPasswordConfirmation.vue';
 
 const routes = [
     {
@@ -297,9 +299,17 @@ const routes = [
         ]
     },
     {
+        path: '/reset-password/:uuid',
+        name: 'reset-password-confirmation',
+        component: ResetPasswordConfirmation,
+        meta: {
+            auth: false
+        }
+    },
+    {
         path: '/blocked-user',
         name: 'blocked-user',
-        component: Home,
+        component: BlockedUser,
         meta: {
             auth: {
                 roles: 1, 
@@ -307,6 +317,11 @@ const routes = [
                 forbiddenRedirect: '/'
             }
         }
+    },
+    {
+        path: '/404',
+        name: '404',
+        component: Home
     }
 ];
 
@@ -315,4 +330,13 @@ const router = new VueRouter({
     mode: 'history',
     routes,
 });
+
+router.beforeEach((to, from, next) => {
+    if (!to.matched.length) {
+        next('/404');
+    } else {
+        next();
+    }
+});
+
 export default router;
