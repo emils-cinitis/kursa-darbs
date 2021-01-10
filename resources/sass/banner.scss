@@ -1,17 +1,12 @@
 .banner {
-    &-page {
-        // &-container {
-
-        // }
-        &-row {
-            padding-top: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid gray;
+    &-page{
+        &-dropdown {
+            ul {
+                box-shadow: 1px 2px 10px 1px;
+            }
         }
     }
-    &-dropdown {
-        ul {
-            box-shadow: 1px 2px 10px 1px;
-        }
-    }
+}
+.cropper {
+    max-height: 60vh;
 }

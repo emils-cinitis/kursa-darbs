@@ -24,6 +24,7 @@
         "@websanova/vue-auth": "^2.21.14-beta",
         "bootstrap-vue": "^2.17.3",
         "es6-promise": "^4.2.6",
+        "vue-advanced-cropper": "^1.0.1",
         "vue-axios": "^2.1.4",
         "vue-color": "^2.7.1",
         "vue-router": "^3.0.2"

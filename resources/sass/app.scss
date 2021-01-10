@@ -127,6 +127,24 @@ $theme_dark_brown: #4F4A41;
 .block-with-sidebar {
     padding-top: 1.5rem;
 }
+.fp-block {
+    &-right {
+        &:hover {
+            background-color: darken($theme_light_blue, 20%) !important;
+        }
+    }
+    &-left {
+        &:hover {
+            background-color: darken($theme_blue, 20%) !important;
+        }
+    }
+    &-right,
+    &-left {
+        span {
+            font-size: 44px;
+        }
+    }
+}
 
 @import 'basic.scss';
 @import 'template.scss';

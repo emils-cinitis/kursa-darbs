@@ -8,17 +8,17 @@ const config = {
   router: router,
   tokenDefaultName: 'laravel-jwt-auth',
   tokenStore: ['localStorage'],
-  rolesVar: 'role',
+  rolesVar: 'user_role',
   
   registerData: {
     url: 'user/store', 
     method: 'POST', 
-    redirect: '/login'
+    redirect: ''
   },
   loginData: {
     url: 'user/login', 
-    method: 'POST', 
-    redirect: '/', 
+    method: 'POST',
+    redirect: '/',
     fetchUser: true
   },
   logoutData: {

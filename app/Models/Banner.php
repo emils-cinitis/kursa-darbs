@@ -19,8 +19,10 @@ class Banner extends Model {
     protected $fillable = [
         'uuid',
         'name',
+        'link_url',
         'main_text',
         'sub_text',
+        'image',
         'call_to_action',
         'color_scheme_id',
         'template_id',
@@ -36,6 +38,13 @@ class Banner extends Model {
     }
 
     public function deleteAllInfo() {
+        if(!empty($this->image)) {
+            if(file_exists(public_path() . $this->image)){
+                unlink(public_path() . $this->image);
+            }
+            if(file_exists(public_path() . '/banners/' . $this->uuid ))
+            rmdir(public_path() . '/banners/' . $this->uuid);
+        }
         $this->delete();
     }
 

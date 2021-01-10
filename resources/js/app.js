@@ -19,7 +19,7 @@ Vue.use(VueRouter)
 Vue.use(BootstrapVue)
 
 Vue.use(VueAxios, axios)
-axios.defaults.baseURL = `http://127.0.0.1:8000/api`
+axios.defaults.baseURL = `http://localhost:8000/api`//`https://tt2.mobinet.lv/api`
 
 Vue.use(VueAuth, auth)
 

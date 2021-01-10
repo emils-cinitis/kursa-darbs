@@ -1,6 +1,6 @@
 <template>
     <div class="block-with-sidebar">
-        <b-form @submit="saveTemplate">
+        <b-form @submit="checkIfTemplateInUse" v-if="exception == '' && !loading">
             <!-- Title -->
             <b-form-group
                 label="Title:"
@@ -41,7 +41,7 @@
                             'height: ' + (banner_types[key].height * banner_type.scale) + 'px;'
                             "
                         >
-
+                            <!-- Blocks -->
                             <div v-for="(block, key1) in banner_type.blocks" :key="key1">
                                 <div class="position-absolute text-center preview-block" v-if="block.enabled"
 
@@ -65,16 +65,19 @@
                         </div>
                     </div>
 
+                    <!-- Sidebar -->
                     <div class="position-relative template-sidebar">
+                        <!-- List of blocks -->
                         <div class="position-absolute bg-white"
                             v-for="(block, key1) in banner_type.blocks" :key="key1" @mousedown="mouseDownList($event, key1, key)" 
-                            :style="'top:' + ((key1 * 30) + ((block.block_type.title == draggable_element.list) ? list_offset : '')) + 'px; border: 1px solid'">
+                            :style="'top:' + ((key1 * 30) + ((block.block_type.title == draggable_element.list && key == draggable_element.type) ? list_offset : '')) + 'px; border: 1px solid'">
                             <a @click='toggleBlock(key1, key)'>
                                 <span v-if="block.enabled">✔</span>
                                 <span v-else>✖</span>
                             </a>
                             <span>{{ block.block_type.title }}</span>
                         </div>
+                        <!-- Size input fields -->
                         <b-row 
                             v-if="selected_block.block_key !== -1 && selected_block.type == key" 
                             :style="'margin-top:' + ((template.banner_types[selected_block.type].blocks.length * 30) + 10) + 'px'"
@@ -124,11 +127,24 @@
                     <b-button type="submit" variant="success">Save</b-button>
                 </b-col>
             </b-row>
+
+            <!-- In use warning modal -->
+            <in-use-warning 
+                :model="'Template'"
+                :banners="template.banners"
+                @edit_item="saveTemplate"
+            />
         </b-form>
+        <div v-else>
+            <span v-if="loading" class="d-block w-100 text-center">Loading...</span>
+            <span v-else class="error-text-single">{{ exception }}</span>
+        </div>
     </div>
 </template>
 <script>
     import axios from 'axios';
+    import InUseWarning from '../../components/InUsePopup.vue';
+
     export default {
         data() {
             return {
@@ -142,11 +158,6 @@
                             blocks: []
                         },
                         tower: {
-                            enabled: false,
-                            scale: 1,
-                            blocks: []
-                        },
-                        square: {
                             enabled: false,
                             scale: 1,
                             blocks: []
@@ -175,14 +186,20 @@
                 errors: {
                     title: '',
                     banner_types: ''
-                }
+                },
+                exception: '',
+                loading: true
             }
         },
+        components: { InUseWarning },
         created() {
-            let id = this.$route.params.id;
+            let id = 0;
+            if(this.$route.params.id > 0) {
+                id = this.$route.params.id;
+            }
             
             this.getBannerTypeInfo();
-            this.getTemplateInfo();
+            this.getTemplateInfo(id);
         },
 
         mounted() {
@@ -194,19 +211,27 @@
         },
 
         methods: {
+            //Get all banner types
             getBannerTypeInfo() {
                 axios.get("/banner-types/")
                     .then((response) => {
                         this.banner_types = response.data.banner_types;
                     }).catch((error) => {
-                        //ToDo: error
+                        this.exception = error.response.data.message;
                     });
             },
 
-            getTemplateInfo() {
-                let id = 0;
-                if(this.$route.params.id > 0) {
-                    id = this.$route.params.id;
+            //Get loaded template and its blocks
+            getTemplateInfo(id) {
+                if(id != 0) {
+                    axios.get("/user/template", { params: { id: id } })
+                    .then((response) => {
+                        this.template.id = response.data.template.id;
+                        this.template.title = response.data.template.title;
+                        this.template.banners = response.data.template.banners;
+                    }).catch((error) => {
+                        this.exception = error.response.data.message;
+                    });
                 }
 
                 axios.get("/banner-blocks/", { params: { id: id } })
@@ -215,17 +240,33 @@
                             if(typeof response.data.blocks[key] != 'undefined') {
                                 this.template.banner_types[key].blocks = response.data.blocks[key];
                             }
+                            if(typeof response.data.banner_types[key] != 'undefined') {
+                                this.template.banner_types[key].enabled = response.data.banner_types[key];
+                            } else {
+                                this.template.banner_types[key].enabled = false;
+                            }
                         });
+                        this.loading = false;
                     }).catch((error) => {
-                        //ToDo: error
+                        this.exception = error.response.data.message;
+                        this.loading = false;
                     });
             },
 
-            async saveTemplate(event) {
-                event.preventDefault();
+            //Save template to database
+            async saveTemplate() {
                 await axios.post("/user/template", this.template)
                     .then((response) => {
-                        //ToDo: success
+                        this.$bvToast.toast(response.data.message, {
+                            title: 'Success',
+                            variant: 'theme-blue-default',
+                            solid: true,
+                            appendToast: true,
+                            autoHideDelay: 10000
+                        });
+                        this.template.id = response.data.id;
+                        this.errors = {};
+
                     }).catch((error) => {
                         if(error.response.data.messages) {
                             this.errors = error.response.data.messages;
@@ -245,13 +286,23 @@
                     });
             },
 
-            // Run scaling function for all banner types
+            //Check if template is in use by a banner
+            checkIfTemplateInUse(event) {
+                event.preventDefault();
+                if(this.template.banners && this.template.banners.length > 0) {
+                    this.$bvModal.show('warning');
+                } else {
+                    this.saveTemplate();
+                }
+            },
+
+            //Run scaling function for all banner types
             calculateAllElementScales() {
                 for( const [key, banner_type]  of Object.entries(this.template.banner_types)) {
                     this.calculateScale(key);
                 }
             },
-            // Downscale the preview blocks for smaller screens
+            //Downscale the preview blocks for smaller screens
             calculateScale(block) {
                 if(
                     typeof this.$refs[block] !== 'undefined' &&
@@ -301,8 +352,8 @@
                 event.preventDefault();
 
                 let scale = this.template.banner_types[this.draggable_element.type].scale;
-                let movementX = (this.draggable_element.x - event.clientX) / scale;
-                let movementY = (this.draggable_element.y - event.clientY) / scale;
+                let movementX = Math.round((this.draggable_element.x - event.clientX) / scale);
+                let movementY = Math.round((this.draggable_element.y - event.clientY) / scale);
 
                 let block = this.template.banner_types[this.draggable_element.type].blocks[this.draggable_element.key];
 

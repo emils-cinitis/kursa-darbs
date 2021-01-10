@@ -1,6 +1,7 @@
 <template>
     <div class="block-with-sidebar">
-        <div v-if="exception == ''">
+        <div v-if="exception == '' && !loading">
+            <!-- Color picker modal -->
             <b-modal id="color-picker" hide-footer title="Color picker" no-close-on-backdrop @hide="hideColorPicker">
                 <chrome v-model="selected_color" />
                 <b-button 
@@ -17,30 +18,17 @@
                     @click="saveColor"
                 >Save</b-button>
             </b-modal>
-            <b-modal id="warning" hide-footer title="Color Scheme in use" no-close-on-backdrop>
-                <h3>This color scheme is already in use!</h3>
-                <p>By modifying this color scheme, all existing banners will change their original colors to the new ones</p>
-                <p>Used in these banners: </p>
-                <ul>
-                    <li v-for='(banner, key) in color_scheme.banners' :key='key'>
-                        <router-link :to="{name: 'edit-banner', params: { uuid: banner.uuid } }">{{banner.name}}</router-link>
-                    </li>
-                </ul>
-                <b-button 
-                    class="mt-3 text-white" 
-                    block 
-                    variant="theme-blue-dark" 
-                    @click="$bvModal.hide('warning');"
-                >Cancel</b-button>
 
-                <b-button 
-                    class="mt-3" 
-                    variant="danger" 
-                    block 
-                    @click="storeColorSchemeAxios"
-                >Save</b-button>
-            </b-modal>
+            <!-- In use warning modal -->
+            <in-use-warning 
+                :model="'Color scheme'"
+                :banners="color_scheme.banners"
+                @edit_item="storeColorSchemeAxios"
+            />
+
+            <!-- Form inputs -->
             <b-form id="color-scheme-form" @submit="saveColorScheme" class="form-medium mx-auto">
+                <!-- Title -->
                 <b-form-group
                     label="Title:"
                     label-for="color-scheme-title"
@@ -135,6 +123,7 @@
                     </b-col>
                 </b-row>
 
+                <!-- Preivew block -->
                 <b-row class="pb-2">
                     <b-col cols="12">
                         <preview 
@@ -146,6 +135,7 @@
                     </b-col>
                 </b-row>
 
+                <!-- Buttons -->
                 <b-row>
                     <b-col :class="(color_scheme.id != 0) ? 'col-4' : 'col-6'">
                         <b-button 
@@ -185,15 +175,17 @@
                 </b-row>
             </b-form>
         </div>
-        <div v-else>
-            <span class="error-text-single">{{ exception }}</span>
+        <div v-else class="w-100">
+            <span v-if="loading" class="w-100 d-block text-center">Loading...</span>
+            <span v-else class="error-text-single">{{ exception }}</span>
         </div>
     </div>
 </template>
 <script>
     import axios from 'axios';
     import { Chrome } from 'vue-color';
-    import Preview from './Preview';
+    import Preview from './Preview.vue';
+    import InUseWarning from '../../components/InUsePopup.vue';
 
     export default {
         data() {
@@ -219,30 +211,37 @@
                     cta_color: '',
                     unexpected: ''
                 },
-                exception: ''
+                exception: '',
+                loading: true
             }
         },
         components: {
             Chrome,
-            Preview
+            Preview,
+            InUseWarning
         },
         created(){
             let id = this.$route.params.id;
             
             if(typeof id != 'undefined') {
                 this.getColorSchemeInfo(id);
+            } else {
+                this.loading = false;
             }
         },
         methods: {
+            //Check if color scheme is in use, if so, show warning
             saveColorScheme(event) {
                 event.preventDefault();
-                
+
                 if(this.color_scheme.banners && this.color_scheme.banners.length > 0) {
                     this.$bvModal.show('warning');
                 } else {
                     this.storeColorSchemeAxios();
                 }
             },
+
+            //Save color scheme to database
             async storeColorSchemeAxios() {
                 if(this.validateInputs()) {
                     await axios.post("/user/color-scheme", this.color_scheme)
@@ -260,30 +259,39 @@
                         });
                 }
             },
+
+            //Get saved color scheme information
             async getColorSchemeInfo(id) {
                 await axios.get("/user/color-scheme", { params: { id: id } } )
                     .then((response) => {
-                        this.color_scheme = response.data.color_scheme
+                        this.color_scheme = response.data.color_scheme;
+                        this.loading = false;
                     }).catch((error) => {
                         this.exception = error.response.data.message;
+                        this.loading = false;
                     });
             },
+            //Show color picker popup
             showColorPicker(name) {
                 this.opened_color_selector = name;
                 this.selected_color =  this.color_scheme[name];
             
                 this.$bvModal.show('color-picker');
             },
+            //Hide color picker popup
             hideColorPicker() {
                 this.opened_color_selector = '';
                 this.selected_color = {};
 
                 this.$bvModal.hide('color-picker');
             },
+            //Save color picker input
             saveColor() {
                 this.color_scheme[this.opened_color_selector] = this.selected_color.hex8;
                 this.hideColorPicker();
             },
+
+            //Validate default inputs
             validateInputs() {
                 let inputs = document.querySelectorAll("input");
                 var correct = true;

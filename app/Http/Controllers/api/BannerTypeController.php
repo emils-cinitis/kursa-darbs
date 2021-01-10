@@ -7,11 +7,19 @@ use Illuminate\Http\Request;
 use App\Models\BannerType;
 
 class BannerTypeController extends Controller {
-    public function get(Request $request) {
+
+    /**
+     * Get all banner types from database
+     * 
+     * @return Response JSON response with success or error
+     */
+    public function get() {
         try {
+            //Get all banner types from database
             $banner_types = BannerType::all();
 
             $banner_types_reformatted = [];
+            //Change array to be sorted by title not ID
             foreach($banner_types as $key => $banner_type) {
                 $banner_type_title = strtolower($banner_type['title']);
                 unset($banner_type['title']);

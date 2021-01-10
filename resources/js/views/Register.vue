@@ -2,7 +2,7 @@
     <b-row>
         <b-col cols="12">
             <b-form id="register-form" @submit="register" :class="'form-small mx-auto ' + ((modal) ? 'no-border' : 'p-3')">
-                <h1 v-if="!modal">Register to site</h1>
+                <h1 v-if="!modal">Register</h1>
                 <b-form-group
                     label="Username:"
                     label-for="user-name"
@@ -70,6 +70,12 @@
                         <b-button type="submit" variant="success">Register</b-button>
                     </b-col>
                 </b-row>
+
+                <b-row>
+                    <b-col cols="12">
+                        <span>Already have an account? Click <a @click="showLoginModal" href="#">here</a> to login!</span>
+                    </b-col>
+                </b-row>
             </b-form>
         </b-col>
     </b-row>
@@ -100,12 +106,13 @@
         methods: {
             register(event){
                 event.preventDefault();
+                var app = this;
                 if(this.validateInputs()) {
-                    var app = this;
                     this.$auth.register({
                         data: app.user,
                         success: function () {
-                            app.$router.push({name: 'login', params: {successRegistrationRedirect: true}})
+                            this.$bvModal.hide('registerModal');
+                            this.$bvModal.show('loginModal');
                         },
                         error: function (res) {
                             app.errors = res.response.data.messages;
@@ -113,9 +120,24 @@
                     });
                 }
             },
-            validateInputs(){
-                //Validate inputs bootstrap
-                return true;
+            showLoginModal() {
+                if(this.modal) {
+                    this.$bvModal.hide('registerModal');
+                    this.$bvModal.show('loginModal');
+                } else {
+                    this.$router.push({name: 'login'});
+                }
+            },
+            validateInputs() {
+                let inputs = document.querySelectorAll("input");
+                var correct = true;
+                inputs.forEach((input) => {
+                    if(!input.checkValidity()) {
+                        input.reportValidity();
+                        correct = false;
+                    }
+                });
+                return correct;
             }
         }
     }

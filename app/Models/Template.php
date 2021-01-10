@@ -21,6 +21,13 @@ class Template extends Model {
         return $this->hasMany('App\Models\Banner');
     }
 
+    public function deleteAllInfo() {
+        foreach($this->blocks as $block) {
+            $block->delete();
+        }
+        $this->delete();
+    }
+
     public function usedBlocks() {
         $blocks = $this->blocks;
 
