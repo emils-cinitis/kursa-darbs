@@ -78,7 +78,7 @@
             <div v-else>
                 <span v-if="loading">Loading...</span>
                 <span v-else>
-                    No banners loaded <router-link :to="{ name: 'public-banners', params: { page: prev_page } }">Prev page</router-link>
+                    No banners loaded
                 </span>
             </div>
         </div>
